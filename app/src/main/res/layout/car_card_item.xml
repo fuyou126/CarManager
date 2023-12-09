@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/car_card"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginHorizontal="30dp"
+    android:layout_marginVertical="10dp"
+    app:cardCornerRadius="15dp"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <ImageView
+            android:id="@+id/car_type_pic"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/car"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="20dp"/>
+
+        <TextView
+            android:id="@+id/car_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="奥迪 A8"
+            android:layout_toEndOf="@id/car_type_pic"
+            android:layout_alignTop="@id/car_type_pic"
+            android:textSize="18sp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="2dp"
+            android:textColor="@color/main_blue_color"/>
+        <TextView
+            android:id="@+id/car_carNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="陕U·7D9AA"
+            android:layout_toEndOf="@id/car_type_pic"
+            android:layout_alignBottom="@id/car_type_pic"
+            android:textSize="15sp"
+            android:layout_marginStart="10dp"
+            android:layout_marginBottom="5dp"
+            android:alpha=".7"/>
+
+        <ImageView
+            android:id="@+id/car_state_pic"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/registered"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="20dp"
+            android:translationY="-10dp"/>
+
+        <TextView
+            android:id="@+id/car_state_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="已登记"
+            android:layout_below="@id/car_state_pic"
+            android:layout_alignStart="@id/car_state_pic"
+            android:translationY="-15dp"
+            android:translationX="3dp" />
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/home_rescue_check_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="65dp">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/home_rescue_check_pic"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/test_sale_car_pic"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="20dp"/>
+        <TextView
+            android:id="@+id/home_rescue_check_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/home_rescue_check_pic"
+            android:layout_toEndOf="@id/home_rescue_check_pic"
+            android:text="危险驾驶"
+            android:layout_marginStart="20dp"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:maxLines="1"
+            android:textColor="@color/red"
+            android:alpha=".8"/>
+        <TextView
+            android:id="@+id/home_rescue_check_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/home_rescue_check_pic"
+            android:layout_toEndOf="@id/home_rescue_check_pic"
+            android:layout_marginStart="20dp"
+            android:text="危险驾驶"
+            android:alpha=".8"
+            android:textSize="14sp"
+            android:maxLines="1"/>
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

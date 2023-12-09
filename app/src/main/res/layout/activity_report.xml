@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".HomePage.Report.ReportActivity"
+    android:background="@color/background_color">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/home_report_back"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        app:cardCornerRadius="70dp"
+        app:cardElevation="0dp"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        tools:ignore="SpeakableTextPresentCheck"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="30dp">
+
+        <ImageView
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center"
+            android:src="@drawable/back_row"
+            android:translationX="8dp" />
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="违规举报"
+        android:textSize="18sp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="37dp"/>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/home_report_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        app:cardCornerRadius="12dp"
+        android:layout_marginHorizontal="80dp"
+        android:layout_marginBottom="20dp"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@color/blue_btn_bg_color"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="提交"
+            android:alpha=".8"
+            android:textSize="20sp"/>
+    </androidx.cardview.widget.CardView>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/home_report_back"
+        android:layout_above="@id/home_report_confirm">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="选择举报类型"
+                android:textSize="18sp"
+                android:alpha=".8"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="30dp"/>
+            <RadioGroup
+                android:id="@+id/home_report_type_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="50dp"
+                android:layout_marginHorizontal="50dp">
+
+                <RadioButton
+                    android:id="@+id/home_report_type_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="违规停车" />
+                <RadioButton
+                    android:id="@+id/home_report_type_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="超速举报" />
+                <RadioButton
+                    android:id="@+id/home_report_type_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="危险驾驶" />
+                <RadioButton
+                    android:id="@+id/home_report_type_4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="其他" />
+            </RadioGroup>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/home_report_description_card"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="5dp"
+                android:layout_marginHorizontal="30dp"
+                android:layout_marginVertical="20dp"
+                android:layout_below="@id/home_report_type_group">
+
+                <EditText
+                    android:id="@+id/home_report_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginVertical="10dp"
+                    android:background="@color/white"
+                    android:hint="输入详细举报内容(必填)"
+                    android:inputType="textMultiLine"
+                    android:scrollbars="vertical"
+                    android:gravity="top" />
+
+            </androidx.cardview.widget.CardView>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="上传举报证据(必填)"
+                android:layout_below="@id/home_report_description_card"
+                android:textSize="18sp"
+                android:layout_marginStart="30dp"
+                android:alpha=".8"
+                android:layout_marginTop="10dp"/>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/home_report_upload"
+                android:layout_width="320dp"
+                android:layout_height="180dp"
+                android:background="@color/white"
+                app:cardCornerRadius="15dp"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:layout_below="@id/home_report_description_card"
+                android:layout_marginTop="55dp"
+                android:layout_marginBottom="10dp"
+                android:layout_centerHorizontal="true">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="+"
+                    android:textSize="40sp"
+                    android:layout_gravity="center"
+                    android:alpha=".8"/>
+                <ImageView
+                    android:id="@+id/home_report_pic"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitXY"/>
+            </androidx.cardview.widget.CardView>
+
+        </RelativeLayout>
+
+    </ScrollView>
+</RelativeLayout>

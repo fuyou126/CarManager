@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".HomePage.MoveCarActivity"
+    android:background="@color/background_color">
+
+
+    <RelativeLayout
+        android:id="@+id/home_move_top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginHorizontal="20dp">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/home_move_back"
+            android:layout_width="48dp"
+            android:layout_centerVertical="true"
+            android:layout_height="48dp"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="10dp"
+            app:cardCornerRadius="70dp"
+            app:cardElevation="5dp"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            tools:ignore="SpeakableTextPresentCheck" >
+
+            <ImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center"
+                android:src="@drawable/back_row"
+                android:translationX="8dp" />
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="一键挪车"
+            android:layout_centerInParent="true"
+            android:textSize="25sp"
+            android:alpha=".8"/>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/home_selector_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/home_move_top_bar"
+        android:layout_alignParentStart="true">
+        <com.github.gzuliyujiang.wheelpicker.widget.CarPlateWheelLayout
+            android:id="@+id/home_move_number_selector"
+            android:layout_width="100dp"
+            android:layout_height="150dp"
+            app:wheel_thirdVisible="false"
+            android:layout_marginStart="50dp"/>
+        <androidx.cardview.widget.CardView
+            android:layout_width="170dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="20dp"
+            app:cardElevation="5dp"
+            app:cardCornerRadius="10dp">
+            <EditText
+                android:id="@+id/home_move_license"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="10dp"
+                android:text=""
+                android:singleLine="true"
+                android:inputType="textVisiblePassword"
+                android:background="@color/white"
+                android:hint="输入车牌" />
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/home_move_search"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/home_selector_bar"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:layout_marginHorizontal="120dp"
+        app:cardCornerRadius="10dp"
+        android:layout_marginTop="20dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/blue_btn_bg_color"
+            android:text="寻找车主"
+            android:gravity="center"
+            android:textSize="17sp"
+            android:textColor="#5C5C5C"
+            tools:ignore=""/>
+
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/home_move_search_tips"
+        android:visibility="visible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/home_move_search"
+        android:text=""
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="20dp"
+        android:textSize="18sp"
+        android:alpha=".75"/>
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/home_move_animation_searching"
+        android:visibility="gone"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        app:lottie_rawRes="@raw/animation_searching"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="180dp"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_speed="1.5"/>
+
+    <RelativeLayout
+        android:id="@+id/home_move_info"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/home_move_search">
+        <TextView
+            android:id="@+id/home_move_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="80dp"
+            android:layout_marginStart="120dp"
+            android:text="车主:张*"
+            android:textSize="18sp"
+            android:alpha=".75"/>
+        <TextView
+            android:id="@+id/home_move_car_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="120dp"
+            android:layout_marginStart="120dp"
+            android:text="车辆:奥迪 A6"
+            android:textSize="18sp"
+            android:alpha=".75"/>
+        <TextView
+            android:id="@+id/home_move_phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="160dp"
+            android:layout_marginStart="120dp"
+            android:text="电话:150****2282"
+            android:textSize="18sp"
+            android:alpha=".75"/>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/home_move_button_email"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="80dp"
+            android:layout_marginStart="70dp"
+            app:cardCornerRadius="70dp">
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/email"
+                android:layout_gravity="center"
+                android:alpha=".7"/>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/home_move_button_call"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="80dp"
+            android:layout_marginEnd="70dp"
+            app:cardCornerRadius="70dp">
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/telephone"
+                android:layout_gravity="center"
+                android:alpha=".7"/>
+        </androidx.cardview.widget.CardView>
+
+    </RelativeLayout>
+</RelativeLayout>

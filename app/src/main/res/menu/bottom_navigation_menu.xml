@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/home"
+        android:title="主页"
+        android:icon="@drawable/home"
+        />
+    <item
+        android:id="@+id/sale"
+        android:title="交易"
+        android:icon="@drawable/sale"
+        />
+    <item
+        android:id="@+id/car"
+        android:icon="@drawable/car"
+        android:title="车辆" />
+    <item
+        android:id="@+id/info"
+        android:title="我的"
+        android:icon="@drawable/person"
+
+        />
+</menu>

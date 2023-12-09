@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/home_rescue_manager_list_item_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="65dp">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/home_rescue_manager_list_item_pic"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/test_sale_car_pic"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="20dp"/>
+        <TextView
+            android:id="@+id/home_rescue_manager_list_item_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/home_rescue_manager_list_item_pic"
+            android:layout_toEndOf="@id/home_rescue_manager_list_item_pic"
+            android:text="拖车:需要拖车救援"
+            android:layout_marginStart="10dp"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:maxLines="1"/>
+        <TextView
+            android:id="@+id/home_rescue_manager_list_item_pos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/home_rescue_manager_list_item_pic"
+            android:layout_toEndOf="@id/home_rescue_manager_list_item_pic"
+            android:layout_marginStart="10dp"
+            android:text="西北大学"
+            android:textColor="@color/red"
+            android:alpha=".8"
+            android:textSize="14sp"
+            android:maxLines="1"/>
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

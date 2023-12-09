@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_color"
+    tools:context=".SalePage.SaleCarActivity">
+    <RelativeLayout
+        android:id="@+id/sale_car_top_linear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="30dp">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/sale_car_detail_back"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            app:cardCornerRadius="70dp"
+            app:cardElevation="0dp"
+            android:layout_centerVertical="true"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            tools:ignore="SpeakableTextPresentCheck" >
+
+            <ImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center"
+                android:src="@drawable/back_row"
+                android:translationX="8dp" />
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/sale_car_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="奥迪A6"
+            android:textSize="23sp"
+            android:textStyle="bold"
+            android:layout_centerInParent="true"/>
+        <TextView
+            android:id="@+id/sale_car_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="￥100000"
+            android:textSize="23sp"
+            android:textColor="@color/red"
+            android:textStyle="bold"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"/>
+
+    </RelativeLayout>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/sale_car_big_pic"
+        android:layout_width="320dp"
+        android:layout_height="180dp"
+        android:layout_marginHorizontal="40dp"
+        app:cardCornerRadius="10dp"
+        android:transitionName="sale_car_big_pic"
+        android:layout_below="@id/sale_car_top_linear"
+        android:layout_centerHorizontal="true"
+        android:layout_marginVertical="20dp">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/test_sale_car_pic"
+            android:scaleType="fitXY"/>
+
+    </androidx.cardview.widget.CardView>
+    <ScrollView
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+     android:layout_below="@id/sale_car_big_pic"
+     android:layout_above="@id/sale_car_bottom_linear"
+     android:layout_marginHorizontal="40dp"
+     android:scrollbars="none">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elegantTextHeight="true"
+            android:gravity="start|top"
+            android:text="全书通过描写梁山好汉反抗欺压、水泊梁山壮大和受宋朝招安，以及受招安后为宋朝征战，最终消亡的宏大故事，艺术地反映了中国历史上宋江起义从发生、发展直至失败的全过程，深刻揭示了起义的社会根源，满腔热情地歌颂了起义英雄的反抗斗争和他们的社会理想，也具体揭示了起义失败的内在历史原因。全书通过描写梁山好汉反抗欺压、水泊梁山壮大和受宋朝招安，以及受招安后为宋朝征战，最终消亡的宏大故事，艺术地反映了中国历史上宋江起义从发生、发展直至失败的全过程，深刻揭示了起义的社会根源，满腔热情地歌颂了起义英雄的反抗斗争和他们的社会理想，也具体揭示了起义失败的内在历史原因。"
+            android:textSize="20sp"
+
+            android:translationX="4dp" />
+
+    </ScrollView>
+
+    <RelativeLayout
+        android:id="@+id/sale_car_bottom_linear"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="30dp"
+        android:layout_alignParentBottom="true">
+
+        <RelativeLayout
+            android:visibility="gone"
+            android:id="@+id/sale_car_bottom_linear_1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/sale_car_like_1"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                app:cardCornerRadius="80dp"
+                app:cardElevation="0dp"
+                android:layout_marginStart="80dp"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                tools:ignore="SpeakableTextPresentCheck"
+                android:layout_alignParentStart="true">
+
+                <ImageView
+                    android:id="@+id/sale_car_heart_1"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/sale_button_like" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/sale_car_message_1"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="80dp"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+
+                app:cardCornerRadius="70dp"
+                app:cardElevation="0dp"
+                tools:ignore="SpeakableTextPresentCheck">
+
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/sale_car_message" />
+            </androidx.cardview.widget.CardView>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:visibility="gone"
+            android:id="@+id/sale_car_bottom_linear_2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/sale_car_like_2"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                app:cardCornerRadius="80dp"
+                app:cardElevation="0dp"
+                android:layout_marginStart="60dp"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                tools:ignore="SpeakableTextPresentCheck"
+                android:layout_alignParentStart="true">
+
+                <ImageView
+                    android:id="@+id/sale_car_heart_2"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/sale_button_like" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/sale_car_message_2"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_centerInParent="true"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+
+                app:cardCornerRadius="70dp"
+                app:cardElevation="0dp"
+                tools:ignore="SpeakableTextPresentCheck">
+
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/sale_car_message" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/sale_car_delete_2"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                app:cardCornerRadius="70dp"
+                app:cardElevation="0dp"
+                android:layout_marginEnd="60dp"
+                android:clickable="true"
+                android:layout_alignParentEnd="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                tools:ignore="SpeakableTextPresentCheck" >
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/delete" />
+            </androidx.cardview.widget.CardView>
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+
+
+
+
+
+</RelativeLayout>

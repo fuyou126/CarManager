@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/sale_chat_list_card"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    android:layout_marginVertical="3dp"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/sale_chat_list_icon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="40dp"
+                android:src="@color/black"
+                android:layout_marginStart="20dp"/>
+
+            <TextView
+                android:id="@+id/sale_chat_list_unseen_num"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignTop="@id/sale_chat_list_icon"
+                android:layout_alignEnd="@id/sale_chat_list_icon"
+                android:background="@drawable/circle_red"
+                android:gravity="center"
+                android:text="1"
+                android:textColor="#FFFFFF"
+                android:translationX="2dp"
+                android:translationY="-22dp" />
+
+            <LinearLayout
+                android:id="@+id/sale_chat_list_unseen_linear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="20dp"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/sale_chat_list_icon"
+                android:layout_toStartOf="@id/sale_chat_list_car_card">
+
+                <TextView
+                    android:id="@+id/sale_chat_list_username"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:textSize="18sp"
+                    android:text="FullName"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/sale_chat_list_last_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:maxLines="1"
+                    android:layout_marginTop="5dp"
+                    android:textColor="#CC2176FF"
+                    android:textSize="14sp"
+                    android:text="这是一条消息"/>
+
+            </LinearLayout>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/sale_chat_list_car_card"
+                android:layout_width="80dp"
+                android:layout_height="45dp"
+                app:cardElevation="0dp"
+                android:layout_toStartOf="@id/sale_chat_list_unseen_num"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="20dp"
+                android:layout_centerVertical="true"
+                app:cardCornerRadius="10dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/test_sale_car_pic"
+                    android:scaleType="fitXY"/>
+
+            </androidx.cardview.widget.CardView>
+        </RelativeLayout>
+        
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

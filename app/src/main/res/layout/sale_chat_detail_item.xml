@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp">
+    
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/sale_chat_detail_your_msg"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="100dp"
+            android:layout_alignParentStart="true"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/sale_chat_detail_your_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingVertical="15dp"
+                android:paddingHorizontal="20dp"
+                android:textColor="@color/white"
+                android:text="我说了一句话"
+                android:background="@drawable/your_msg_bubble"
+                android:textSize="18sp"/>
+            <TextView
+                android:id="@+id/sale_chat_detail_your_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textSize="10sp"
+                android:text="2023/11/12 18:29"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/sale_chat_detail_my_msg"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="100dp"
+            android:layout_marginEnd="20dp"
+            android:layout_alignParentEnd="true"
+            android:orientation="vertical"
+            android:gravity="end">
+
+            <TextView
+                android:id="@+id/sale_chat_detail_my_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingVertical="15dp"
+                android:paddingHorizontal="20dp"
+                android:textColor="@color/white"
+                android:text="我说了一句话"
+                android:background="@drawable/my_msg_bubble"
+                android:textSize="18sp"/>
+            <TextView
+                android:id="@+id/sale_chat_detail_my_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textSize="10sp"
+                android:text="2023/11/12 18:29"
+                />
+        </LinearLayout>
+
+    </RelativeLayout>
+</RelativeLayout>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".HomePage.CarRescue.RescueManagerActivity"
+    android:background="@color/background_color">
+
+    <com.amap.api.maps2d.MapView
+        android:id="@+id/home_rescue_manager_map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/home_rescue_manager_back"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        app:cardCornerRadius="70dp"
+        app:cardElevation="0dp"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        tools:ignore="SpeakableTextPresentCheck"
+        android:layout_centerVertical="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="20dp">
+        <ImageView
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center"
+            android:src="@drawable/back_row"
+            android:translationX="8dp" />
+    </androidx.cardview.widget.CardView>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="西大救援"
+        android:textSize="22sp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="15dp"/>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/home_rescue_manager_list"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        app:cardCornerRadius="70dp"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        tools:ignore="SpeakableTextPresentCheck"
+        android:layout_marginBottom="40dp">
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/detail"
+            android:layout_gravity="center"/>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:visibility="gone"
+        android:id="@+id/home_rescue_manager_list_panel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:cardCornerRadius="20dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginVertical="90dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/background_color">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="待处理请求"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentTop="true"
+                android:textSize="20sp"
+                android:layout_marginTop="25dp"/>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/home_rescue_manager_list_panel_close"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="20dp"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:outlineSpotShadowColor="@color/red"
+                app:cardBackgroundColor="#00FFFFFF"
+                app:cardCornerRadius="70dp"
+                tools:ignore="SpeakableTextPresentCheck,UnusedAttribute,TouchTargetSizeCheck">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/close" />
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/home_rescue_manager_list_rv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/background_color"
+                android:layout_marginTop="70dp"
+                android:layout_marginBottom="10dp"/>
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>

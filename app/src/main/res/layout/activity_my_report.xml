@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".HomePage.Report.MyReportActivity">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/home_my_report_back"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentStart="true"
+        app:cardCornerRadius="70dp"
+        app:cardElevation="5dp"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        tools:ignore="SpeakableTextPresentCheck"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="30dp">
+
+        <ImageView
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center"
+            android:src="@drawable/back_row"
+            android:translationX="8dp" />
+    </androidx.cardview.widget.CardView>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="违规记录"
+        android:textSize="20sp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="37dp"/>
+    <ImageView
+        android:id="@+id/home_my_report_emo"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/smile"
+        android:alpha=".7"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/home_my_report_rv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/home_my_report_back"
+        android:layout_above="@id/home_my_report_emo"
+        android:layout_marginVertical="20dp"/>
+
+</RelativeLayout>

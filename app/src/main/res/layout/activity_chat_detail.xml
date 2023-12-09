@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_color"
+    tools:context=".SalePage.Chat.ChatDetailActivity">
+
+    <RelativeLayout
+        android:id="@+id/sale_chat_detail_topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/sale_chat_detail_back"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            app:cardCornerRadius="70dp"
+            app:cardElevation="10dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="10dp"
+            android:layout_centerVertical="true"
+            android:layout_marginVertical="20dp"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            tools:ignore="SpeakableTextPresentCheck" >
+
+            <ImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center"
+                android:src="@drawable/back_row"
+                android:translationX="8dp" />
+        </androidx.cardview.widget.CardView>
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/sale_chat_detail_icon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/sale_chat_detail_back"
+            android:src="@color/black"
+            android:transitionName="sale_chat_detail_icon"/>
+        
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_toEndOf="@id/sale_chat_detail_icon"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp">
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:text="User Name"
+                android:textColor="#424242"
+                android:textStyle="bold"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:text="宝马"
+                android:layout_marginTop="2dp"
+                android:textColor="@color/black"/>
+            
+        </LinearLayout>
+        
+        <androidx.cardview.widget.CardView
+            android:id="@+id/sale_chat_detail_car_card"
+            android:layout_width="80dp"
+            android:layout_height="45dp"
+            app:cardElevation="0dp"
+            app:cardCornerRadius="10dp"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="20dp"
+            android:layout_alignParentEnd="true"
+            android:transitionName="sale_chat_detail_car_card">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/test_sale_car_pic"
+                android:scaleType="fitXY"/>
+
+        </androidx.cardview.widget.CardView>
+        
+    </RelativeLayout>
+
+    <com.scwang.smart.refresh.layout.SmartRefreshLayout
+        android:id="@+id/sale_chat_detail_fresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background_color"
+        android:layout_below="@id/sale_chat_detail_topBar"
+        android:layout_above="@id/sale_chat_detail_bottomBar">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/sale_chat_detail_rv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/background_color">
+        </androidx.recyclerview.widget.RecyclerView>
+
+    </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/sale_chat_detail_bottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp">
+
+        <EditText
+            android:id="@+id/sale_chat_detail_input"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:backgroundTint="@android:color/transparent"
+            android:textSize="14sp"
+            android:layout_marginStart="20dp"
+            android:hint="输入要发送的话"
+            android:layout_toStartOf="@id/sale_chat_detail_send"
+            android:imeOptions="actionSend"
+            android:singleLine="true"/>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/sale_chat_detail_send"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:cardBackgroundColor="@color/background_color"
+            app:cardElevation="0dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10dp"
+            app:cardCornerRadius="70dp"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            tools:ignore="SpeakableTextPresentCheck">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:src="@drawable/send"/>
+
+        </androidx.cardview.widget.CardView>
+
+
+
+    </RelativeLayout>
+
+
+</RelativeLayout>
