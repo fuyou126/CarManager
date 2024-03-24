@@ -17,20 +17,32 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.signature.ObjectKey;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+import com.example.car.HTTPServer.ApiServer;
 import com.example.car.R;
-import com.example.car.SalePage.Sell.SaleSellCarActivity;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class TakePhotoActivity extends AppCompatActivity {
 
@@ -38,6 +50,11 @@ public class TakePhotoActivity extends AppCompatActivity {
     private final int REQUEST_PERMISSIONS = 0;
     Uri afterCrop;
     String currentPhotoPath;
+
+    Retrofit retrofit = new Retrofit.Builder()
+            .baseUrl("http://182.92.87.107:8081/")
+            .build();
+    ApiServer apiService = retrofit.create(ApiServer.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,9 +90,40 @@ public class TakePhotoActivity extends AppCompatActivity {
                 }
             } else if (requestCode == UCrop.REQUEST_CROP) {
                 Uri uri = UCrop.getOutput(intent);
-                // todo upload
-                deletePhotoFile();
-                finish();
+                File file;
+                try {
+                    file = new File(new URI(uri.toString()));
+                } catch (URISyntaxException e) {
+                    throw new RuntimeException(e);
+                }
+                RequestBody requestBody = RequestBody.create(MediaType.parse("image/*"), file);
+                MultipartBody.Part imagePart = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
+                Call<ResponseBody> call = apiService.uploadIcon(imagePart, UserInfo.UserStuNum);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                        if (response.isSuccessful()) {
+                            try {
+                                String responseString = response.body().string();
+                                Map<String, String> jsonMap = JSON.parseObject(responseString, new TypeReference<HashMap<String, String>>() {});
+                                if(jsonMap.get("code").equals("1")){
+                                    Toast.makeText(getApplicationContext(),"头像上传成功",Toast.LENGTH_LONG).show();
+                                    deletePhotoFile();
+                                    finish();
+                                }
+                            } catch (IOException e) {
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        // 处理失败的情况
+                        Toast.makeText(getApplicationContext(),"网络错误",Toast.LENGTH_LONG).show();
+                        deletePhotoFile();
+                        finish();
+                    }
+                });
             }
         }
     }
@@ -116,8 +164,11 @@ public class TakePhotoActivity extends AppCompatActivity {
             file.delete();
         }
         afterCrop = Uri.fromFile(file);
+        UCrop.Options options = new UCrop.Options();
+        options.setCompressionQuality(10);
         UCrop.of(uri, afterCrop)
                 .withAspectRatio(1, 1)
+                .withOptions(options)
                 .start(TakePhotoActivity.this,UCrop.REQUEST_CROP);
     }
 

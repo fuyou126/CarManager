@@ -1,10 +1,11 @@
 package com.example.car.Car;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
-import androidx.cardview.widget.CardView;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,23 +14,45 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
+import com.example.car.HTTPServer.ApiServer;
+import com.example.car.HomePage.LicenseCheck.LicenseCard;
+import com.example.car.Info.UserInfo;
 import com.example.car.R;
-import com.example.car.SalePage.Like.SaleLikeActivity;
-import com.example.car.SalePage.Sell.SaleSellCarActivity;
 import com.github.gzuliyujiang.wheelpicker.OptionPicker;
 import com.github.gzuliyujiang.wheelpicker.contract.OnOptionPickedListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 
 public class CarFragment extends Fragment {
     private View view;
     RecyclerView car_rv;
-    List<CarCard> list = new ArrayList<>();
     ImageButton car_button_add;
+
+    List<CarCard> list = new ArrayList<>();
+    CarCardAdapter adapter = new CarCardAdapter(list,this);
+
+    Retrofit retrofit = new Retrofit.Builder()
+            .baseUrl("http://182.92.87.107:8081/")
+            .build();
+    ApiServer apiService = retrofit.create(ApiServer.class);
 
     public CarFragment() {
         // Required empty public constructor
@@ -84,12 +107,55 @@ public class CarFragment extends Fragment {
         });
 
         car_rv = view.findViewById(R.id.car_rv);
-        list.add(new CarCard("Car","奥迪 A8","陕A8S8ZS",true));
-        list.add(new CarCard("Car","奥迪 A6","陕UCZCZO0",false));
-        list.add(new CarCard("Motor","奥迪 A8","陕A8S8ZS",false));
-        list.add(new CarCard("Bike","奥迪 A8","陕A8S8ZS",false));
-        CarCardAdapter adapter = new CarCardAdapter(list,requireActivity());
         car_rv.setAdapter(adapter);
         car_rv.setLayoutManager(new LinearLayoutManager(requireActivity()));
+
+        getCarInfo();
+    }
+
+    protected void getCarInfo() {
+        Call<ResponseBody> call = apiService.getMyCar(UserInfo.UserStuNum);
+        call.enqueue(new Callback<ResponseBody>() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    try {
+                        String responseString = response.body().string();
+                        Map<String, String> jsonMap = JSON.parseObject(responseString, new TypeReference<HashMap<String, String>>() {});
+                        if(jsonMap.get("code").equals("1")){
+                            list.clear();
+                            JSONArray jsonArray = JSONArray.parseArray(jsonMap.get("cars"));
+                            if (jsonArray != null) {
+                                for (Object obj : jsonArray) {
+                                    JSONObject jsonObj = (JSONObject) obj;
+                                    String carNumber = jsonObj.getString("carNumber");
+                                    String type = jsonObj.getString("type");
+                                    boolean isSign = jsonObj.getString("isSign").equals("1");
+                                    String brand = jsonObj.getString("brand");
+                                    String model = jsonObj.getString("model");
+                                    String carId = jsonObj.getString("carId");
+
+                                    list.add(new CarCard(brand,model,type,carNumber,isSign,carId));
+                                }
+                                adapter.notifyDataSetChanged();
+                            }
+                        }
+                    } catch (IOException e) {
+                    }
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                // 处理失败的情况
+                Toast.makeText(requireActivity(),"网络错误",Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getCarInfo();
     }
 }

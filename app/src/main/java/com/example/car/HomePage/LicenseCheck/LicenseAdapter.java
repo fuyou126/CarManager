@@ -41,7 +41,7 @@ public class LicenseAdapter extends RecyclerView.Adapter<LicenseAdapter.ViewHold
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, LicenseDetailActivity.class);
-                intent.putExtra("username",lists.get(position).username);
+                intent.putExtra("carId",lists.get(position).carId);
                 context.startActivity(intent);
             }
         });

@@ -10,6 +10,7 @@ import androidx.core.content.FileProvider;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -26,25 +27,44 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.signature.ObjectKey;
 import com.example.car.HTTPServer.ApiServer;
+import com.example.car.HomeActivity;
 import com.example.car.HomePage.NewCarPlateProvider;
+import com.example.car.Info.UserInfo;
 import com.example.car.R;
 import com.example.car.SalePage.Sell.SaleSellCarActivity;
+import com.example.car.loginActivity;
 import com.github.gzuliyujiang.wheelpicker.widget.CarPlateWheelLayout;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class CarAddActivity extends AppCompatActivity {
+    Context context = this;
+
     String addType = "car";
     ImageView car_add_type;
     CardView car_add_back;
@@ -122,17 +142,101 @@ public class CarAddActivity extends AppCompatActivity {
         car_add_confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // todo commit
                 if(addType.equals("car")){
                     if(picUri == null) {
                         Toast.makeText(getApplicationContext(), "请上传行驶证图片", Toast.LENGTH_SHORT).show();
                     }else {
-                        // todo
+                        File file;
+                        try {
+                            file = new File(new URI(picUri.toString()));
+                        } catch (URISyntaxException e) {
+                            throw new RuntimeException(e);
+                        }
+                        RequestBody requestBody = RequestBody.create(MediaType.parse("image/*"), file);
+                        MultipartBody.Part imagePart = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
+                        String carNumber = car_add_number_selector.getFirstWheelView().getCurrentItem().toString() + car_add_number_selector.getSecondWheelView().getCurrentItem().toString() + car_add_license.getText();
+
+                        Call<ResponseBody> call = apiService.addCar(imagePart, UserInfo.UserStuNum, carNumber, car_add_brand.getText().toString(), car_add_model.getText().toString(), UserInfo.UserName);
+                        call.enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                                if (response.isSuccessful()) {
+                                    try {
+                                        String responseString = response.body().string();
+                                        Map<String, String> jsonMap = JSON.parseObject(responseString, new TypeReference<HashMap<String, String>>() {});
+                                        if(jsonMap.get("code").equals("1")){
+                                            Toast.makeText(getApplicationContext(),"车辆上传成功",Toast.LENGTH_LONG).show();
+                                            finish();
+                                        }else if(jsonMap.get("code").equals("0")){
+                                            Toast.makeText(getApplicationContext(),jsonMap.get("description"),Toast.LENGTH_LONG).show();
+                                        }
+                                    } catch (IOException e) {
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                // 处理失败的情况
+                                Toast.makeText(getApplicationContext(),"网络错误",Toast.LENGTH_LONG).show();
+                            }
+                        });
+
                     }
                 }else if (addType.equals("motor")){
                     // todo
+                    String carNumber = car_add_number_selector.getFirstWheelView().getCurrentItem().toString() + car_add_number_selector.getSecondWheelView().getCurrentItem().toString() + car_add_license.getText();
+                    Call<ResponseBody> call = apiService.addOther(UserInfo.UserStuNum, carNumber, car_add_brand.getText().toString(), car_add_model.getText().toString(), addType, UserInfo.UserName);
+                    call.enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                            if (response.isSuccessful()) {
+                                try {
+                                    String responseString = response.body().string();
+                                    Map<String, String> jsonMap = JSON.parseObject(responseString, new TypeReference<HashMap<String, String>>() {});
+                                    if(jsonMap.get("code").equals("1")){
+                                        Toast.makeText(getApplicationContext(),"车辆上传成功",Toast.LENGTH_LONG).show();
+                                        finish();
+                                    }else if(jsonMap.get("code").equals("0")){
+                                        Toast.makeText(getApplicationContext(),jsonMap.get("上传失败"),Toast.LENGTH_LONG).show();
+                                    }
+                                } catch (IOException e) {
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            // 处理失败的情况
+                            Toast.makeText(getApplicationContext(),"网络错误",Toast.LENGTH_LONG).show();
+                        }
+                    });
                 }else {
-                    // todo
+                    Call<ResponseBody> call = apiService.addOther(UserInfo.UserStuNum, "",car_add_brand.getText().toString(), car_add_model.getText().toString(), addType, UserInfo.UserName);
+                    call.enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                            if (response.isSuccessful()) {
+                                try {
+                                    String responseString = response.body().string();
+                                    Map<String, String> jsonMap = JSON.parseObject(responseString, new TypeReference<HashMap<String, String>>() {});
+                                    if(jsonMap.get("code").equals("1")){
+                                        Toast.makeText(getApplicationContext(),"车辆上传成功",Toast.LENGTH_LONG).show();
+                                        finish();
+                                    }else if(jsonMap.get("code").equals("0")){
+                                        Toast.makeText(getApplicationContext(),jsonMap.get("上传失败"),Toast.LENGTH_LONG).show();
+                                    }
+                                } catch (IOException e) {
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            // 处理失败的情况
+                            Toast.makeText(getApplicationContext(),"网络错误",Toast.LENGTH_LONG).show();
+                        }
+                    });
                 }
             }
         });

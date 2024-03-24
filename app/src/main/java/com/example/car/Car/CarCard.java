@@ -5,12 +5,14 @@ public class CarCard {
     String carName;
     String carNumber;
     Boolean isRegister;
+    String carId;
 
-    public CarCard(String carType, String carName, String carNumber, Boolean isRegister) {
+    public CarCard(String carBrand,String carModel, String carType, String carNumber, Boolean isRegister, String carId) {
         this.carType = carType;
-        this.carName = carName;
+        this.carName = carBrand + " " + carModel;
         this.carNumber = carNumber;
         this.isRegister = isRegister;
+        this.carId = carId;
     }
     public String getFormatCarNumber(){
         String res = "";

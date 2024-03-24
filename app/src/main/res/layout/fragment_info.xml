@@ -67,6 +67,7 @@
                                 android:textColor="@color/main_blue_color"
                                 android:alpha=".8"/>
                             <TextView
+                                android:id="@+id/info_stuNumber"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="2020118108"
@@ -99,6 +100,7 @@
                                 android:textColor="@color/main_blue_color"
                                 android:alpha=".8"/>
                             <TextView
+                                android:id="@+id/info_phone"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="15091752282"
@@ -130,6 +132,7 @@
                                 android:textColor="@color/main_blue_color"
                                 android:alpha=".8"/>
                             <TextView
+                                android:id="@+id/info_carName"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="无"
@@ -161,6 +164,7 @@
                                 android:textColor="@color/main_blue_color"
                                 android:alpha=".8"/>
                             <TextView
+                                android:id="@+id/info_status"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="无"
@@ -193,6 +197,7 @@
                                 android:textColor="@color/main_blue_color"
                                 android:alpha=".8"/>
                             <TextView
+                                android:id="@+id/info_learned"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="0"

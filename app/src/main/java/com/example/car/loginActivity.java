@@ -21,6 +21,7 @@ import com.example.car.Info.UserInfo;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -79,9 +80,10 @@ public class loginActivity extends AppCompatActivity {
                                     String responseString = response.body().string();
                                     Map<String, String> jsonMap = JSON.parseObject(responseString, new TypeReference<HashMap<String, String>>() {});
                                     if(jsonMap.get("code").equals("1")){
-                                        Toast.makeText(getApplicationContext(),"登录成功",Toast.LENGTH_LONG).show();
                                         UserInfo.setUserStuNum(StuNumber);
-                                        UserInfo.admin = jsonMap.get("admin").equals("1");
+                                        UserInfo.setAdmin(Objects.requireNonNull(jsonMap.get("admin")));
+                                        UserInfo.setUserName(jsonMap.get("username"));
+                                        Toast.makeText(getApplicationContext(),"登录成功",Toast.LENGTH_LONG).show();
                                         Intent intent = new Intent(loginActivity.this,HomeActivity.class);
                                         intent.putExtra("StuNumber",StuNumber);
                                         startActivity(intent);
