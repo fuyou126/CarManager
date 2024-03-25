@@ -11,10 +11,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
@@ -31,14 +34,48 @@ import com.amap.api.services.geocoder.GeocodeSearch;
 import com.amap.api.services.geocoder.RegeocodeAddress;
 import com.amap.api.services.geocoder.RegeocodeQuery;
 import com.amap.api.services.geocoder.RegeocodeResult;
+import com.example.car.HTTPServer.ApiServer;
+import com.example.car.Info.UserInfo;
 import com.example.car.R;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class RescueActivity extends AppCompatActivity implements GeocodeSearch.OnGeocodeSearchListener{
     Context context = this;
+
+    BottomSheetDialog bottomSheetDialog;
+    CardView home_rescue_card_1;
+    CardView home_rescue_card_2;
+    CardView home_rescue_card_3;
+    ImageView home_rescue_button_1;
+    ImageView home_rescue_button_2;
+    ImageView home_rescue_button_3;
+    TextView home_rescue_text_1;
+    TextView home_rescue_text_2;
+    TextView home_rescue_text_3;
+    TextView home_rescue_text_tips;
+    LinearLayout home_rescue_linear;
+    EditText home_rescue_description;
+    CardView home_rescue_button_cancel;
+    CardView home_rescue_button_confirm;
+    CardView home_rescue_description_card;
+    RelativeLayout home_rescue_waiting;
+    TextView home_rescue_waiting_type;
+    TextView home_rescue_waiting_position;
+    TextView home_rescue_waiting_description;
+
     CardView home_rescue_back;
     CardView home_rescue_help;
     TextView home_rescue_position;
@@ -53,10 +90,19 @@ public class RescueActivity extends AppCompatActivity implements GeocodeSearch.O
 
     AMapLocationListener mLocationListener;
 
+    Retrofit retrofit = new Retrofit.Builder()
+            .baseUrl("http://182.92.87.107:8081/")
+            .build();
+    ApiServer apiService = retrofit.create(ApiServer.class);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rescue);
+
+        bottomSheetDialog = new BottomSheetDialog(RescueActivity.this);
+        bottomSheetDialog.setContentView(R.layout.home_rescue_helper_sheet);
+        bottomSheetDialog.setDismissWithAnimation(true);
 
         home_rescue_map =  findViewById(R.id.home_rescue_map);
         home_rescue_map.onCreate(savedInstanceState);
@@ -76,6 +122,27 @@ public class RescueActivity extends AppCompatActivity implements GeocodeSearch.O
         ServiceSettings.updatePrivacyShow(context,true,true);
         ServiceSettings.updatePrivacyAgree(context,true);
 
+        home_rescue_card_1 = bottomSheetDialog.findViewById(R.id.home_rescue_card_1);
+        home_rescue_card_2 = bottomSheetDialog.findViewById(R.id.home_rescue_card_2);
+        home_rescue_card_3 = bottomSheetDialog.findViewById(R.id.home_rescue_card_3);
+        home_rescue_button_1 = bottomSheetDialog.findViewById(R.id.home_rescue_button_1);
+        home_rescue_button_2 = bottomSheetDialog.findViewById(R.id.home_rescue_button_2);
+        home_rescue_button_3 = bottomSheetDialog.findViewById(R.id.home_rescue_button_3);
+        home_rescue_text_1 = bottomSheetDialog.findViewById(R.id.home_rescue_text_1);
+        home_rescue_text_2 = bottomSheetDialog.findViewById(R.id.home_rescue_text_2);
+        home_rescue_text_3 = bottomSheetDialog.findViewById(R.id.home_rescue_text_3);
+        home_rescue_text_tips = bottomSheetDialog.findViewById(R.id.home_rescue_text_tips);
+        home_rescue_linear = bottomSheetDialog.findViewById(R.id.home_rescue_linear);
+        home_rescue_description = bottomSheetDialog.findViewById(R.id.home_rescue_description);
+        home_rescue_button_cancel = bottomSheetDialog.findViewById(R.id.home_rescue_button_cancel);
+        home_rescue_button_confirm = bottomSheetDialog.findViewById(R.id.home_rescue_button_confirm);
+        home_rescue_description_card = bottomSheetDialog.findViewById(R.id.home_rescue_description_card);
+        home_rescue_waiting = bottomSheetDialog.findViewById(R.id.home_rescue_waiting);
+        home_rescue_waiting_type = bottomSheetDialog.findViewById(R.id.home_rescue_waiting_type);
+        home_rescue_waiting_position = bottomSheetDialog.findViewById(R.id.home_rescue_waiting_position);
+        home_rescue_waiting_description = bottomSheetDialog.findViewById(R.id.home_rescue_waiting_description);
+        home_rescue_position = bottomSheetDialog.findViewById(R.id.home_rescue_position);
+
         home_rescue_back = findViewById(R.id.home_rescue_back);
         home_rescue_back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,36 +158,12 @@ public class RescueActivity extends AppCompatActivity implements GeocodeSearch.O
         home_rescue_help.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(RescueActivity.this);
-                bottomSheetDialog.setContentView(R.layout.home_rescue_helper_sheet);
-                bottomSheetDialog.setDismissWithAnimation(true);
                 bottomSheetDialog.show();
 
-                // 已经有请求
-                if(false){
-                    RelativeLayout home_rescue_waiting = bottomSheetDialog.findViewById(R.id.home_rescue_waiting);
-                    home_rescue_waiting.setVisibility(View.VISIBLE);
-                }
-
-                home_rescue_position = bottomSheetDialog.findViewById(R.id.home_rescue_position);
                 CameraPosition cameraPosition = aMap.getCameraPosition();
                 LatLng target = cameraPosition.target;
                 RegeocodeQuery query = new RegeocodeQuery(new LatLonPoint(target.latitude,target.longitude), 200,GeocodeSearch.AMAP);
                 geocoderSearch.getFromLocationAsyn(query);
-
-
-                CardView home_rescue_card_1 = bottomSheetDialog.findViewById(R.id.home_rescue_card_1);
-                CardView home_rescue_card_2 = bottomSheetDialog.findViewById(R.id.home_rescue_card_2);
-                CardView home_rescue_card_3 = bottomSheetDialog.findViewById(R.id.home_rescue_card_3);
-                ImageView home_rescue_button_1 = bottomSheetDialog.findViewById(R.id.home_rescue_button_1);
-                ImageView home_rescue_button_2 = bottomSheetDialog.findViewById(R.id.home_rescue_button_2);
-                ImageView home_rescue_button_3 = bottomSheetDialog.findViewById(R.id.home_rescue_button_3);
-                TextView home_rescue_text_1 = bottomSheetDialog.findViewById(R.id.home_rescue_text_1);
-                TextView home_rescue_text_2 = bottomSheetDialog.findViewById(R.id.home_rescue_text_2);
-                TextView home_rescue_text_3 = bottomSheetDialog.findViewById(R.id.home_rescue_text_3);
-                EditText home_rescue_description = bottomSheetDialog.findViewById(R.id.home_rescue_description);
-                CardView home_rescue_button_cancel = bottomSheetDialog.findViewById(R.id.home_rescue_button_cancel);
-                CardView home_rescue_button_confirm = bottomSheetDialog.findViewById(R.id.home_rescue_button_confirm);
 
                 home_rescue_button_cancel.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -164,28 +207,95 @@ public class RescueActivity extends AppCompatActivity implements GeocodeSearch.O
                         home_rescue_text_3.setTextColor(Color.rgb(255,255,255));
                     }
                 });
-                //
                 home_rescue_button_confirm.setOnClickListener(new View.OnClickListener() {
+                    @SuppressLint("SetTextI18n")
                     @Override
                     public void onClick(View view) {
-                        String description = home_rescue_description.getText().toString();
                         // send selected description pos
-                        if(true){
-                            RelativeLayout home_rescue_waiting = bottomSheetDialog.findViewById(R.id.home_rescue_waiting);
-                            home_rescue_waiting.setVisibility(View.VISIBLE);
-                            TextView home_rescue_waiting_type = bottomSheetDialog.findViewById(R.id.home_rescue_waiting_type);
-                            if(selected == 1){
-                                home_rescue_waiting_type.setText("救援类型:拖车");
-                            } else if (selected == 2) {
-                                home_rescue_waiting_type.setText("救援类型:换胎");
-                            }else {
-                                home_rescue_waiting_type.setText("救援类型:其他");
-                            }
-                            TextView home_rescue_waiting_position = bottomSheetDialog.findViewById(R.id.home_rescue_waiting_position);
-                            home_rescue_waiting_position.setText("位置:"+home_rescue_position.getText().toString());
-                            TextView home_rescue_waiting_description = bottomSheetDialog.findViewById(R.id.home_rescue_waiting_description);
-                            home_rescue_waiting_description.setText("备注:"+description);
+                        CameraPosition cameraPosition = aMap.getCameraPosition();
+                        LatLng target = cameraPosition.target;
+
+                        String description = home_rescue_description.getText().toString();
+                        String position = home_rescue_position.getText().toString();
+                        String longitude = String.valueOf(target.longitude);
+                        String latitude = String.valueOf(target.latitude);
+                        String type;
+                        if (selected == 1) {
+                            type = "拖车";
+                        } else if (selected == 2) {
+                            type = "换胎";
+                        } else {
+                            type = "其他";
                         }
+                        Call<ResponseBody> call = apiService.addRescue(UserInfo.UserStuNum,type,description,position,longitude, latitude);
+                        call.enqueue(new Callback<ResponseBody>() {
+                            @SuppressLint("SetTextI18n")
+                            @Override
+                            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                                if (response.isSuccessful()) {
+                                    try {
+                                        String responseString = response.body().string();
+                                        Map<String, String> jsonMap = JSON.parseObject(responseString, new TypeReference<HashMap<String, String>>() {});
+                                        if(Objects.equals(jsonMap.get("code"), "1")){
+                                            home_rescue_waiting.setVisibility(View.VISIBLE);
+                                            home_rescue_text_tips.setVisibility(View.GONE);
+                                            home_rescue_position.setVisibility(View.GONE);
+                                            home_rescue_description_card.setVisibility(View.GONE);
+                                            home_rescue_button_cancel.setVisibility(View.GONE);
+                                            home_rescue_button_confirm.setVisibility(View.GONE);
+                                            home_rescue_linear.setVisibility(View.GONE);
+
+                                            home_rescue_waiting_type.setText("救援类型："+type);
+                                            home_rescue_waiting_position.setText("位置："+position);
+                                            home_rescue_waiting_description.setText("备注："+description);
+                                        }
+                                    } catch (IOException e) {
+                                    }
+                                }
+                            }
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                // 处理失败的情况
+                                Toast.makeText(getApplicationContext(),"网络错误",Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+                });
+
+                Call<ResponseBody> call = apiService.getMyRescue(UserInfo.UserStuNum);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @SuppressLint("SetTextI18n")
+                    @Override
+                    public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                        if (response.isSuccessful()) {
+                            try {
+                                String responseString = response.body().string();
+                                Map<String, String> jsonMap = JSON.parseObject(responseString, new TypeReference<HashMap<String, String>>() {});
+                                if(Objects.equals(jsonMap.get("code"), "1") && Objects.equals(jsonMap.get("haveFound"), "1")){
+                                    home_rescue_waiting.setVisibility(View.VISIBLE);
+                                    home_rescue_text_tips.setVisibility(View.GONE);
+                                    home_rescue_position.setVisibility(View.GONE);
+                                    home_rescue_description_card.setVisibility(View.GONE);
+                                    home_rescue_button_cancel.setVisibility(View.GONE);
+                                    home_rescue_button_confirm.setVisibility(View.GONE);
+                                    home_rescue_linear.setVisibility(View.GONE);
+
+                                    home_rescue_waiting_type.setText("救援类型："+jsonMap.get("type"));
+                                    home_rescue_waiting_position.setText("位置："+jsonMap.get("position"));
+                                    home_rescue_waiting_description.setText("备注："+jsonMap.get("description"));
+
+                                    double latitude = Double.parseDouble(Objects.requireNonNull(jsonMap.get("latitude")));
+                                    double longitude = Double.parseDouble(Objects.requireNonNull(jsonMap.get("longitude")));
+                                    aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude,longitude),17.0f));
+                                }
+                            } catch (IOException e) {
+                            }
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        // 处理失败的情况
+                        Toast.makeText(getApplicationContext(),"网络错误",Toast.LENGTH_LONG).show();
                     }
                 });
 
@@ -201,7 +311,6 @@ public class RescueActivity extends AppCompatActivity implements GeocodeSearch.O
                     Date date = new Date(aMapLocation.getTime());
                     df.format(date);
 
-                    Toast.makeText(getApplicationContext(),aMapLocation.getAddress(),Toast.LENGTH_LONG).show();
                 }else {
                     //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
                     Toast.makeText(getApplicationContext(),"定位失败，错误码" + aMapLocation.getErrorCode()+aMapLocation.getErrorInfo(),Toast.LENGTH_LONG).show();
@@ -235,6 +344,43 @@ public class RescueActivity extends AppCompatActivity implements GeocodeSearch.O
         aMap.getUiSettings().setMyLocationButtonEnabled(true);
         aMap.animateCamera(CameraUpdateFactory.zoomTo(17.0F));
         aMap.setMyLocationEnabled(true);
+
+        Call<ResponseBody> call = apiService.getMyRescue(UserInfo.UserStuNum);
+        call.enqueue(new Callback<ResponseBody>() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    try {
+                        String responseString = response.body().string();
+                        Map<String, String> jsonMap = JSON.parseObject(responseString, new TypeReference<HashMap<String, String>>() {});
+                        if(Objects.equals(jsonMap.get("code"), "1") && Objects.equals(jsonMap.get("haveFound"), "1")){
+                            home_rescue_waiting.setVisibility(View.VISIBLE);
+                            home_rescue_text_tips.setVisibility(View.GONE);
+                            home_rescue_position.setVisibility(View.GONE);
+                            home_rescue_description_card.setVisibility(View.GONE);
+                            home_rescue_button_cancel.setVisibility(View.GONE);
+                            home_rescue_button_confirm.setVisibility(View.GONE);
+                            home_rescue_linear.setVisibility(View.GONE);
+
+                            home_rescue_waiting_type.setText("救援类型："+jsonMap.get("type"));
+                            home_rescue_waiting_position.setText("位置："+jsonMap.get("position"));
+                            home_rescue_waiting_description.setText("备注："+jsonMap.get("description"));
+
+                            double latitude = Double.parseDouble(Objects.requireNonNull(jsonMap.get("latitude")));
+                            double longitude = Double.parseDouble(Objects.requireNonNull(jsonMap.get("longitude")));
+                            aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude,longitude),17.0f));
+                        }
+                    } catch (IOException e) {
+                    }
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                // 处理失败的情况
+                Toast.makeText(getApplicationContext(),"网络错误",Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
 
@@ -280,6 +426,5 @@ public class RescueActivity extends AppCompatActivity implements GeocodeSearch.O
     public void onGeocodeSearched(GeocodeResult geocodeResult, int i) {
         geocodeResult.getGeocodeAddressList().get(0).getLatLonPoint();
     }
-
 
 }

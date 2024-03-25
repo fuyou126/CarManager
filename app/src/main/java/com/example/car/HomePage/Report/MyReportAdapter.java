@@ -8,20 +8,17 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.car.R;
 
 import java.util.List;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
 public class MyReportAdapter extends RecyclerView.Adapter<MyReportAdapter.ViewHolder>{
-    private List<ReportCard> lists;
+    private List<MyReportCard> lists;
     private Context context;
 
-    public MyReportAdapter(List<ReportCard> lists, Context context) {
+    public MyReportAdapter(List<MyReportCard> lists, Context context) {
         this.lists = lists;
         this.context = context;
     }
@@ -37,7 +34,7 @@ public class MyReportAdapter extends RecyclerView.Adapter<MyReportAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.home_my_report_detail_type.setText(lists.get(position).type);
-        holder.home_my_report_detail_description.setText(lists.get(position).description);
+        holder.home_my_report_detail_date.setText(lists.get(position).date);
     }
 
     @Override
@@ -47,12 +44,12 @@ public class MyReportAdapter extends RecyclerView.Adapter<MyReportAdapter.ViewHo
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView home_my_report_detail_type;
-        TextView home_my_report_detail_description;
+        TextView home_my_report_detail_date;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             home_my_report_detail_type = itemView.findViewById(R.id.home_my_report_detail_type);
-            home_my_report_detail_description = itemView.findViewById(R.id.home_my_report_detail_description);
+            home_my_report_detail_date = itemView.findViewById(R.id.home_my_report_detail_date);
         }
     }
 }

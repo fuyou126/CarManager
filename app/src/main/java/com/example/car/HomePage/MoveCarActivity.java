@@ -11,9 +11,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.InputFilter;
-import android.text.Spanned;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -22,9 +21,22 @@ import android.widget.Toast;
 import android.Manifest;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+import com.example.car.HTTPServer.ApiServer;
+import com.example.car.Info.UserInfo;
 import com.example.car.R;
-import com.github.gzuliyujiang.wheelpicker.impl.CarPlateProvider;
 import com.github.gzuliyujiang.wheelpicker.widget.CarPlateWheelLayout;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class MoveCarActivity extends AppCompatActivity {
     CardView home_move_back;
@@ -43,6 +55,11 @@ public class MoveCarActivity extends AppCompatActivity {
     private final int REQUEST_PERMISSIONS_EMAIL = 1;
     private final int REQUEST_PERMISSIONS_CALL = 2;
     String phone_number;
+
+    Retrofit retrofit = new Retrofit.Builder()
+            .baseUrl("http://182.92.87.107:8081/")
+            .build();
+    ApiServer apiService = retrofit.create(ApiServer.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,27 +98,52 @@ public class MoveCarActivity extends AppCompatActivity {
             @SuppressLint("SetTextI18n")
             @Override
             public void onClick(View view) {
-                // searching
-                home_move_info.setVisibility(View.GONE);
-                home_move_search_tips.setText("正在寻找中...");
-                home_move_animation_searching.setVisibility(View.VISIBLE);
                 // start search
-
-                // search finish
-                if(true) {
-                    home_move_animation_searching.setVisibility(View.GONE);
-                    home_move_search_tips.setText("已经查找到车主信息，如需挪车请联系车主");
-                    home_move_info.setVisibility(View.VISIBLE);
-                    // update info
-                    home_move_name.setText("车主:张*");
-                    home_move_car_name.setText("车辆:奥迪 A6");
-                    home_move_phone.setText("电话:150****2282");
-                    phone_number = "15091752282";
-                }else {
-                    //search error
-                    home_move_animation_searching.setVisibility(View.GONE);
-                    home_move_search_tips.setText("未查到车主信息，请检查车牌号是否正确");
+                if (home_move_license.getText().toString().equals("")) {
+                    Toast.makeText(getApplicationContext(),"车牌号不能为空",Toast.LENGTH_LONG).show();
+                } else {
+                    // searching
                     home_move_info.setVisibility(View.GONE);
+                    home_move_search_tips.setText("正在寻找中...");
+                    home_move_animation_searching.setVisibility(View.VISIBLE);
+                    // waiting 1s
+                    new Handler().postDelayed(() -> {
+                        String carNumber = home_move_number_selector.getFirstWheelView().getCurrentItem().toString() + home_move_number_selector.getSecondWheelView().getCurrentItem().toString() + home_move_license.getText();
+                        Call<ResponseBody> call = apiService.moveCar(carNumber);
+                        call.enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                                if (response.isSuccessful()) {
+                                    try {
+                                        String responseString = response.body().string();
+                                        Map<String, String> jsonMap = JSON.parseObject(responseString, new TypeReference<HashMap<String, String>>() {});
+                                        if(jsonMap.get("code").equals("1")){
+                                            // search finish
+                                            home_move_name.setText("车主："+jsonMap.get("username"));
+                                            home_move_car_name.setText("车辆："+jsonMap.get("brand")+" "+jsonMap.get("model"));
+                                            home_move_phone.setText("电话："+jsonMap.get("hide_phone"));
+                                            phone_number = jsonMap.get("phone");
+
+                                            home_move_animation_searching.setVisibility(View.GONE);
+                                            home_move_search_tips.setText("已经查找到车主信息，如需挪车请联系车主");
+                                            home_move_info.setVisibility(View.VISIBLE);
+                                        } else if (jsonMap.get("code").equals("0")) {
+                                            //search error
+                                            home_move_animation_searching.setVisibility(View.GONE);
+                                            home_move_search_tips.setText("未查到车主信息，请检查车牌号是否正确");
+                                            home_move_info.setVisibility(View.GONE);
+                                        }
+                                    } catch (IOException e) {
+                                    }
+                                }
+                            }
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                // 处理失败的情况
+                                Toast.makeText(getApplicationContext(),"网络错误",Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    },1000);
                 }
             }
         });

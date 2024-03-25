@@ -16,6 +16,8 @@ import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.signature.ObjectKey;
 import com.example.car.MainActivity;
 import com.example.car.R;
 import com.example.car.SalePage.SaleCardAdapter;
@@ -45,11 +47,21 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ViewHolder
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         holder.home_rescue_check_type.setText(lists.get(position).type);
         holder.home_rescue_check_description.setText(lists.get(position).getDescriptionSimple());
+        Glide.with(context)
+                .load("http://182.92.87.107:8080/CarServerFile/reportImage/"+lists.get(position).reportId)
+                .error(R.drawable.nwulogo)
+                .placeholder(R.drawable.nwulogo)
+                .into(holder.home_rescue_check_pic);
         holder.home_rescue_check_card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, ReportDetailActivity.class);
-                intent.putExtra("ReportId",lists.get(position).ReportId);
+                intent.putExtra("reportId",lists.get(position).reportId);
+                intent.putExtra("carId",lists.get(position).carId);
+                intent.putExtra("stuNumber",lists.get(position).stuNumber);
+                intent.putExtra("carNumber",lists.get(position).carNumber);
+                intent.putExtra("description",lists.get(position).description);
+                intent.putExtra("type",lists.get(position).type);
                 ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context,holder.home_rescue_check_pic,"pic");
                 context.startActivity(intent,optionsCompat.toBundle());
             }

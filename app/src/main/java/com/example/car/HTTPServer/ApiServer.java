@@ -57,4 +57,38 @@ public interface ApiServer {
     @Multipart
     @POST("info/uploadIcon")
     Call<ResponseBody> uploadIcon(@Part MultipartBody.Part img, @Query("stuNumber") String stuNumber);
+
+    @POST("func/moveCar")
+    Call<ResponseBody> moveCar(@Query("carNumber") String carNumber);
+
+    @Multipart
+    @POST("func/report")
+    Call<ResponseBody> report(@Part MultipartBody.Part img, @Query("type") String type,@Query("carNumber") String carNumber ,@Query("description") String description);
+
+    @POST("func/getReportList")
+    Call<ResponseBody> getReportList();
+
+    @POST("func/checkReport")
+    Call<ResponseBody> checkReport(@Query("reportId") String reportId,@Query("carId") String carId);
+
+    @POST("func/rejectReport")
+    Call<ResponseBody> rejectReport(@Query("reportId") String reportId,@Query("carId") String carId);
+
+    @POST("func/getMyReport")
+    Call<ResponseBody> getMyReport(@Query("stuNumber") String stuNumber);
+
+    @POST("func/findUser")
+    Call<ResponseBody> findUser(@Query("carNumber") String carNumber);
+
+    @POST("rescue/getMyRescue")
+    Call<ResponseBody> getMyRescue(@Query("stuNumber") String stuNumber);
+
+    @POST("rescue/addRescue")
+    Call<ResponseBody> addRescue(@Query("stuNumber") String stuNumber, @Query("type") String type, @Query("description") String description, @Query("position") String position, @Query("longitude") String longitude, @Query("latitude") String latitude);
+
+    @POST("rescue/getRescueList")
+    Call<ResponseBody> getRescueList();
+
+    @POST("rescue/deleteRescue")
+    Call<ResponseBody> deleteRescue(@Query("rescueId") String rescueId);
 }

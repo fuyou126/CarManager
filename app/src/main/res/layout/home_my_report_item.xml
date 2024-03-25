@@ -25,7 +25,7 @@
             android:layout_marginTop="7dp"
             android:alpha=".8"/>
         <TextView
-            android:id="@+id/home_my_report_detail_description"
+            android:id="@+id/home_my_report_detail_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"

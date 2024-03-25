@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.signature.ObjectKey;
 import com.example.car.R;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
@@ -49,6 +51,12 @@ public class RescueManagerAdapter extends RecyclerView.Adapter<RescueManagerAdap
                 }
             }
         });
+        Glide.with(context)
+                .load("http://182.92.87.107:8080/CarServerFile/userIcon/"+lists.get(position).stuNumber)
+                .error(R.drawable.nwulogo)
+                .placeholder(R.drawable.nwulogo)
+                .signature(new ObjectKey(System.currentTimeMillis()))
+                .into(holder.home_rescue_manager_list_item_pic);
     }
 
     @Override

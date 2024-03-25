@@ -3,14 +3,15 @@ package com.example.car.HomePage.CarRescue;
 public class RescueCard {
     String username;
     int rescue_type;
-    int rescueId;
+    String rescueId;
     double latitude;
     double longitude;
     String address;
     String description;
     String phone;
+    String stuNumber;
 
-    public RescueCard(String username, int rescue_type, int rescueId, double latitude, double longitude, String address, String description,String phone) {
+    public RescueCard(String username, int rescue_type, String rescueId, double latitude, double longitude, String address, String description,String phone,String stuNumber) {
         this.username = username;
         this.rescue_type = rescue_type;
         this.rescueId = rescueId;
@@ -19,6 +20,7 @@ public class RescueCard {
         this.address = address;
         this.description = description;
         this.phone = phone;
+        this.stuNumber = stuNumber;
     }
 
     public String getRescue_description_str(){

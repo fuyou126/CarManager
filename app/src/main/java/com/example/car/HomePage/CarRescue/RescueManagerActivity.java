@@ -15,6 +15,10 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
@@ -28,14 +32,27 @@ import com.amap.api.maps2d.model.MarkerOptions;
 import com.amap.api.maps2d.model.MyLocationStyle;
 import com.amap.api.services.core.ServiceSettings;
 import com.amap.api.services.geocoder.GeocodeSearch;
+import com.example.car.Car.CarCard;
+import com.example.car.HTTPServer.ApiServer;
+import com.example.car.Info.UserInfo;
 import com.example.car.R;
 import com.example.car.SalePage.Chat.ChatDetailCard;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class RescueManagerActivity extends AppCompatActivity  implements RescueManagerAdapter.OnItemClickListener{
     Context context = this;
@@ -45,6 +62,7 @@ public class RescueManagerActivity extends AppCompatActivity  implements RescueM
     CardView home_rescue_manager_list_panel_close;
     RecyclerView home_rescue_manager_list_rv;
     List<RescueCard> list = new ArrayList<>();
+    RescueManagerAdapter adapter;
 
     MapView home_rescue_manager_map;
     MyLocationStyle myLocationStyle; // 定位蓝点
@@ -52,6 +70,11 @@ public class RescueManagerActivity extends AppCompatActivity  implements RescueM
     AMapLocationClient mLocationClient;
     AMapLocationClientOption mLocationOption;
     AMapLocationListener mLocationListener;
+
+    Retrofit retrofit = new Retrofit.Builder()
+            .baseUrl("http://182.92.87.107:8081/")
+            .build();
+    ApiServer apiService = retrofit.create(ApiServer.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,9 +134,7 @@ public class RescueManagerActivity extends AppCompatActivity  implements RescueM
         });
 
         // 配置适配器
-        list.add(new RescueCard("zhangfan",2,0,34.15092,108.88110,"西北大学长安校区","需要救援！","15091752282"));
-        list.add(new RescueCard("zhangfan",1,0,34.14797,108.87744,"陕西省西安市长安区凤林北路辅路","需要救援！","15091752282"));
-        RescueManagerAdapter adapter = new RescueManagerAdapter(list,this);
+        adapter = new RescueManagerAdapter(list,this);
         adapter.setOnItemClickListener(this);
         home_rescue_manager_list_rv.setAdapter(adapter);
         home_rescue_manager_list_rv.setLayoutManager(new LinearLayoutManager(this));
@@ -161,76 +182,136 @@ public class RescueManagerActivity extends AppCompatActivity  implements RescueM
         aMap.getUiSettings().setMyLocationButtonEnabled(true);
         aMap.animateCamera(CameraUpdateFactory.zoomTo(17.0F));
         aMap.setMyLocationEnabled(true);
+    }
 
-        // 绘制点标记
-        List<String> markerId = new ArrayList<>();
-        for(int i=0;i<list.size();i++){
-            RescueCard rescueCard = list.get(i);
-            LatLng latLng = new LatLng(rescueCard.latitude,rescueCard.longitude);
-            Marker marker = aMap.addMarker(new MarkerOptions().position(latLng).title(rescueCard.username).snippet("需要"+rescueCard.getRescue_type_str()));
-            markerId.add(marker.getId());
-        }
-        aMap.setOnMarkerClickListener(new AMap.OnMarkerClickListener() {
+    private void getReportList(){
+
+        Call<ResponseBody> call = apiService.getRescueList();
+        call.enqueue(new Callback<ResponseBody>() {
+            @SuppressLint({"SetTextI18n", "NotifyDataSetChanged"})
             @Override
-            public boolean onMarkerClick(Marker marker) {
-                for(int i =0;i<markerId.size();i++){
-                    if(marker.getId().equals(markerId.get(i))){
-                        home_rescue_manager_list_panel.setVisibility(View.GONE);
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    try {
+                        String responseString = response.body().string();
+                        Map<String, String> jsonMap = JSON.parseObject(responseString, new TypeReference<HashMap<String, String>>() {});
+                        if(Objects.equals(jsonMap.get("code"), "1")){
+                            list.clear();
+                            JSONArray jsonArray = JSONArray.parseArray(jsonMap.get("rescues"));
+                            if (jsonArray != null) {
+                                for (Object obj : jsonArray) {
+                                    JSONObject jsonObj = (JSONObject) obj;
+                                    String rescueId = jsonObj.getString("rescueId");
+                                    String username = jsonObj.getString("username");
+                                    String type = jsonObj.getString("type");
+                                    String description = jsonObj.getString("description");
+                                    String phone = jsonObj.getString("phone");
+                                    String position = jsonObj.getString("position");
+                                    double longitude = Double.parseDouble(jsonObj.getString("longitude"));
+                                    double latitude = Double.parseDouble(jsonObj.getString("latitude"));
+                                    String stuNumber = jsonObj.getString("stuNumber");
 
-                        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(RescueManagerActivity.this);
-                        bottomSheetDialog.setContentView(R.layout.home_rescue_manager_helper_sheet);
-                        bottomSheetDialog.setDismissWithAnimation(true);
-                        bottomSheetDialog.show();
-                        bottomSheetDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                            @Override
-                            public void onDismiss(DialogInterface dialogInterface) {
-                                ObjectAnimator.ofFloat(home_rescue_manager_list, "alpha", 0f, 1f)
-                                        .setDuration(300)
-                                        .start();
-                                home_rescue_manager_list.setVisibility(View.VISIBLE);
+                                    int type_int;
+                                    if (type.equals("拖车")) {
+                                        type_int = 1;
+                                    } else if (type.equals("换胎")) {
+                                        type_int = 2;
+                                    } else {
+                                        type_int = 3;
+                                    }
+                                    list.add(new RescueCard(username,type_int,rescueId,latitude,longitude,position,description,phone,stuNumber));
+                                }
+                                adapter.notifyDataSetChanged();
+
+                                // 绘制点标记
+                                List<String> markerId = new ArrayList<>();
+                                aMap.clear();
+                                myLocationStyle = new MyLocationStyle();
+                                myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATE);
+                                myLocationStyle.showMyLocation(true);
+                                aMap.setMyLocationStyle(myLocationStyle);
+                                aMap.getUiSettings().setMyLocationButtonEnabled(true);
+                                aMap.animateCamera(CameraUpdateFactory.zoomTo(17.0F));
+                                aMap.setMyLocationEnabled(true);
+                                aMap.invalidate();
+                                for(int i=0;i<list.size();i++){
+                                    RescueCard rescueCard = list.get(i);
+                                    LatLng latLng = new LatLng(rescueCard.latitude,rescueCard.longitude);
+                                    Marker marker = aMap.addMarker(new MarkerOptions().position(latLng).title(rescueCard.username).snippet("需要"+rescueCard.getRescue_type_str()));
+                                    markerId.add(marker.getId());
+                                }
+                                aMap.setOnMarkerClickListener(new AMap.OnMarkerClickListener() {
+                                    @Override
+                                    public boolean onMarkerClick(Marker marker) {
+                                        for(int i =0;i<markerId.size();i++){
+                                            if(marker.getId().equals(markerId.get(i))){
+                                                home_rescue_manager_list_panel.setVisibility(View.GONE);
+
+                                                BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(RescueManagerActivity.this);
+                                                bottomSheetDialog.setContentView(R.layout.home_rescue_manager_helper_sheet);
+                                                bottomSheetDialog.setDismissWithAnimation(true);
+                                                bottomSheetDialog.show();
+                                                bottomSheetDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                                    @Override
+                                                    public void onDismiss(DialogInterface dialogInterface) {
+                                                        ObjectAnimator.ofFloat(home_rescue_manager_list, "alpha", 0f, 1f)
+                                                                .setDuration(300)
+                                                                .start();
+                                                        home_rescue_manager_list.setVisibility(View.VISIBLE);
+                                                    }
+                                                });
+
+                                                TextView home_rescue_manager_detail_username = bottomSheetDialog.findViewById(R.id.home_rescue_manager_detail_username);
+                                                TextView home_rescue_manager_detail_type = bottomSheetDialog.findViewById(R.id.home_rescue_manager_detail_type);
+                                                TextView home_rescue_manager_detail_description = bottomSheetDialog.findViewById(R.id.home_rescue_manager_detail_description);
+                                                TextView home_rescue_manager_detail_phone = bottomSheetDialog.findViewById(R.id.home_rescue_manager_detail_phone);
+                                                TextView home_rescue_manager_detail_position = bottomSheetDialog.findViewById(R.id.home_rescue_manager_detail_position);
+                                                CardView home_rescue_manager_detail_cancel = bottomSheetDialog.findViewById(R.id.home_rescue_manager_detail_cancel);
+                                                CardView home_rescue_manager_detail_confirm = bottomSheetDialog.findViewById(R.id.home_rescue_manager_detail_confirm);
+
+                                                if(i < list.size()){
+                                                    RescueCard rescueCard = list.get(i);
+                                                    aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(rescueCard.latitude,rescueCard.longitude),17.0f));
+                                                    home_rescue_manager_detail_username.setText("用户:"+rescueCard.username);
+                                                    home_rescue_manager_detail_type.setText("救援类型:"+rescueCard.getRescue_type_str());
+                                                    home_rescue_manager_detail_description.setText("备注:"+rescueCard.description);
+                                                    home_rescue_manager_detail_phone.setText("联系电话:"+rescueCard.phone);
+                                                    home_rescue_manager_detail_position.setText("位置:"+rescueCard.address);
+                                                    home_rescue_manager_detail_cancel.setOnClickListener(new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View view) {
+                                                            bottomSheetDialog.dismiss();
+                                                        }
+                                                    });
+                                                    home_rescue_manager_detail_confirm.setOnClickListener(new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View view) {
+                                                            bottomSheetDialog.dismiss();
+
+                                                            // handle
+
+                                                            Toast.makeText(getApplicationContext(),rescueCard.username+"的救援请求已处理",Toast.LENGTH_LONG).show();
+                                                        }
+                                                    });
+
+                                                }
+                                            }
+                                        }
+                                        return true;
+                                    }
+                                });
                             }
-                        });
-
-                        TextView home_rescue_manager_detail_username = bottomSheetDialog.findViewById(R.id.home_rescue_manager_detail_username);
-                        TextView home_rescue_manager_detail_type = bottomSheetDialog.findViewById(R.id.home_rescue_manager_detail_type);
-                        TextView home_rescue_manager_detail_description = bottomSheetDialog.findViewById(R.id.home_rescue_manager_detail_description);
-                        TextView home_rescue_manager_detail_phone = bottomSheetDialog.findViewById(R.id.home_rescue_manager_detail_phone);
-                        TextView home_rescue_manager_detail_position = bottomSheetDialog.findViewById(R.id.home_rescue_manager_detail_position);
-                        CardView home_rescue_manager_detail_cancel = bottomSheetDialog.findViewById(R.id.home_rescue_manager_detail_cancel);
-                        CardView home_rescue_manager_detail_confirm = bottomSheetDialog.findViewById(R.id.home_rescue_manager_detail_confirm);
-
-                        if(i < list.size()){
-                            RescueCard rescueCard = list.get(i);
-                            aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(rescueCard.latitude,rescueCard.longitude),17.0f));
-                            home_rescue_manager_detail_username.setText("用户:"+rescueCard.username);
-                            home_rescue_manager_detail_type.setText("救援类型:"+rescueCard.getRescue_type_str());
-                            home_rescue_manager_detail_description.setText("备注:"+rescueCard.description);
-                            home_rescue_manager_detail_phone.setText("联系电话:"+rescueCard.phone);
-                            home_rescue_manager_detail_position.setText("位置:"+rescueCard.address);
-                            home_rescue_manager_detail_cancel.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    bottomSheetDialog.dismiss();
-                                }
-                            });
-                            home_rescue_manager_detail_confirm.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    bottomSheetDialog.dismiss();
-
-                                    // handle
-
-                                    Toast.makeText(getApplicationContext(),rescueCard.username+"的救援请求已处理",Toast.LENGTH_LONG).show();
-                                }
-                            });
-
                         }
+                    } catch (IOException e) {
                     }
                 }
-                return true;
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                // 处理失败的情况
+                Toast.makeText(getApplicationContext(),"网络错误",Toast.LENGTH_LONG).show();
             }
         });
-
     }
 
 
@@ -245,6 +326,7 @@ public class RescueManagerActivity extends AppCompatActivity  implements RescueM
         super.onResume();
         //在activity执行onResume时执行home_rescue_map.onResume ()，重新绘制加载地图
         home_rescue_manager_map.onResume();
+        getReportList();
     }
     @Override
     protected void onPause() {
@@ -302,11 +384,31 @@ public class RescueManagerActivity extends AppCompatActivity  implements RescueM
             home_rescue_manager_detail_confirm.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    bottomSheetDialog.dismiss();
-
                     // handle
-
-                    Toast.makeText(getApplicationContext(),rescueCard.username+"的救援请求已处理",Toast.LENGTH_LONG).show();
+                    Call<ResponseBody> call = apiService.deleteRescue(rescueCard.rescueId);
+                    call.enqueue(new Callback<ResponseBody>() {
+                        @SuppressLint("NotifyDataSetChanged")
+                        @Override
+                        public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                            if (response.isSuccessful()) {
+                                try {
+                                    String responseString = response.body().string();
+                                    Map<String, String> jsonMap = JSON.parseObject(responseString, new TypeReference<HashMap<String, String>>() {});
+                                    if(jsonMap.get("code").equals("1")){
+                                        getReportList();
+                                        bottomSheetDialog.dismiss();
+                                        Toast.makeText(getApplicationContext(),rescueCard.username+"的救援请求已处理",Toast.LENGTH_LONG).show();
+                                    }
+                                } catch (IOException e) {
+                                }
+                            }
+                        }
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            // 处理失败的情况
+                            Toast.makeText(getApplicationContext(),"网络错误",Toast.LENGTH_LONG).show();
+                        }
+                    });
                 }
             });
 

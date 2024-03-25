@@ -93,6 +93,7 @@
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/home_find_animation_searching"
         android:visibility="gone"
+        tools:visibility="visible"
         android:layout_width="250dp"
         android:layout_height="250dp"
         app:lottie_rawRes="@raw/animation_searching"
@@ -106,6 +107,7 @@
     <RelativeLayout
         android:id="@+id/home_find_info"
         android:visibility="gone"
+        tools:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/home_find_search">
@@ -114,7 +116,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="80dp"
-            android:layout_marginStart="120dp"
+            android:layout_marginStart="90dp"
             android:text="车主:张樊"
             android:textSize="18sp"
             android:alpha=".75"/>
@@ -123,7 +125,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="120dp"
-            android:layout_marginStart="120dp"
+            android:layout_marginStart="90dp"
             android:text="车辆:奥迪 A6"
             android:textSize="18sp"
             android:alpha=".75"/>
@@ -132,7 +134,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="160dp"
-            android:layout_marginStart="120dp"
+            android:layout_marginStart="90dp"
             android:text="电话:15091752282"
             android:textSize="18sp"
             android:alpha=".75"/>
@@ -141,7 +143,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="200dp"
-            android:layout_marginStart="120dp"
+            android:layout_marginStart="90dp"
             android:text="学号:2020118108"
             android:textSize="18sp"
             android:alpha=".75"/>
@@ -150,7 +152,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="240dp"
-            android:layout_marginStart="120dp"
+            android:layout_marginStart="90dp"
             android:text="信誉:优秀"
             android:textSize="18sp"
             android:alpha=".75"/>

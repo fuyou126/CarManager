@@ -19,6 +19,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.InputFilter;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -27,21 +28,40 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.signature.ObjectKey;
-import com.example.car.Car.CarAddActivity;
-import com.example.car.HomePage.CardActivity;
+import com.example.car.HTTPServer.ApiServer;
+import com.example.car.HomePage.NewCarPlateProvider;
+import com.example.car.Info.UserInfo;
 import com.example.car.R;
+import com.github.gzuliyujiang.wheelpicker.widget.CarPlateWheelLayout;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class ReportActivity extends AppCompatActivity {
+    CarPlateWheelLayout home_report_selector;
+    EditText home_report_license;
 
     CardView home_report_back;
     CardView home_report_confirm;
@@ -60,7 +80,13 @@ public class ReportActivity extends AppCompatActivity {
     private final int REQUEST_PERMISSIONS = 0;
     private final int REQUEST_PERMISSIONS_PIC = 1;
     Uri afterCrop;
+    Uri picUri = null;
     String currentPhotoPath;
+
+    Retrofit retrofit = new Retrofit.Builder()
+            .baseUrl("http://182.92.87.107:8081/")
+            .build();
+    ApiServer apiService = retrofit.create(ApiServer.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +108,12 @@ public class ReportActivity extends AppCompatActivity {
         home_report_description = findViewById(R.id.home_report_description);
         home_report_upload = findViewById(R.id.home_report_upload);
         home_report_pic = findViewById(R.id.home_report_pic);
+        home_report_selector = findViewById(R.id.home_report_selector);
+        home_report_license = findViewById(R.id.home_report_license);
+
+        home_report_license.setFilters(new InputFilter[]{new InputFilter.AllCaps(),new InputFilter.LengthFilter(6)});
+        home_report_selector.setData(new NewCarPlateProvider());
+        home_report_selector.setDefaultValue("陕","A","");
 
         home_report_back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,12 +124,45 @@ public class ReportActivity extends AppCompatActivity {
         home_report_confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // todo
-                if(true) {
-                    Toast.makeText(getApplicationContext(), "已提交举报内容，请等待审核", Toast.LENGTH_LONG).show();
-                    finish();
-                }else {
-                    Toast.makeText(getApplicationContext(), "举报格式有误", Toast.LENGTH_LONG).show();
+                if (picUri != null) {
+                    String carNumber = home_report_selector.getFirstWheelView().getCurrentItem().toString() + home_report_selector.getSecondWheelView().getCurrentItem().toString() + home_report_license.getText();
+                    String description = home_report_description.getText().toString();
+                    File file;
+                    try {
+                        file = new File(new URI(picUri.toString()));
+                    } catch (URISyntaxException e) {
+                        throw new RuntimeException(e);
+                    }
+                    RequestBody requestBody = RequestBody.create(MediaType.parse("image/*"), file);
+                    MultipartBody.Part imagePart = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
+
+                    Call<ResponseBody> call = apiService.report(imagePart, report_type,carNumber , description);
+                    call.enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                            if (response.isSuccessful()) {
+                                try {
+                                    String responseString = response.body().string();
+                                    Map<String, String> jsonMap = JSON.parseObject(responseString, new TypeReference<HashMap<String, String>>() {});
+                                    if(jsonMap.get("code").equals("1")){
+                                        Toast.makeText(getApplicationContext(),"举报已提交",Toast.LENGTH_LONG).show();
+                                        finish();
+                                    }else if(jsonMap.get("code").equals("0")){
+                                        Toast.makeText(getApplicationContext(),jsonMap.get("description"),Toast.LENGTH_LONG).show();
+                                    }
+                                } catch (IOException e) {
+                                }
+                            }
+                        }
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            // 处理失败的情况
+                            Toast.makeText(getApplicationContext(),"网络错误",Toast.LENGTH_LONG).show();
+                        }
+                    });
+
+                } else {
+                    Toast.makeText(getApplicationContext(), "请上传举报证明", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -172,9 +237,9 @@ public class ReportActivity extends AppCompatActivity {
                 Uri uri = intent.getData(); // 获得已选择照片的路径对象
                 startCrop(uri);
             } else if (requestCode == UCrop.REQUEST_CROP) {
-                Uri uri = UCrop.getOutput(intent);
+                picUri = UCrop.getOutput(intent);
                 Glide.with(ReportActivity.this)
-                        .load(uri)
+                        .load(picUri)
                         .signature(new ObjectKey(System.currentTimeMillis()))
                         .into(home_report_pic);
                 deletePhotoFile();
@@ -230,8 +295,11 @@ public class ReportActivity extends AppCompatActivity {
             file.delete();
         }
         afterCrop = Uri.fromFile(file);
+        UCrop.Options options = new UCrop.Options();
+        options.setCompressionQuality(50);
         UCrop.of(uri, afterCrop)
                 .withAspectRatio(16, 9)
+                .withOptions(options)
                 .start(ReportActivity.this,UCrop.REQUEST_CROP);
     }
 

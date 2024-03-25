@@ -165,7 +165,7 @@ public class TakePhotoActivity extends AppCompatActivity {
         }
         afterCrop = Uri.fromFile(file);
         UCrop.Options options = new UCrop.Options();
-        options.setCompressionQuality(10);
+        options.setCompressionQuality(5);
         UCrop.of(uri, afterCrop)
                 .withAspectRatio(1, 1)
                 .withOptions(options)
