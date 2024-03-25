@@ -77,6 +77,18 @@ public interface ApiServer {
     @POST("func/getMyReport")
     Call<ResponseBody> getMyReport(@Query("stuNumber") String stuNumber);
 
+    @POST("func/getFirstQuestion")
+    Call<ResponseBody> getFirstQuestion();
+
+    @POST("func/getQuestion")
+    Call<ResponseBody> getQuestion(@Query("lastQuestionId") String lastQuestionId);
+
+    @POST("func/getLearned")
+    Call<ResponseBody> getLearned(@Query("stuNumber") String stuNumber);
+
+    @POST("func/setLearned")
+    Call<ResponseBody> setLearned(@Query("stuNumber") String stuNumber);
+
     @POST("func/findUser")
     Call<ResponseBody> findUser(@Query("carNumber") String carNumber);
 
