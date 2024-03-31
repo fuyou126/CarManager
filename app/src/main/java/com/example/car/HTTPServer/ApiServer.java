@@ -103,4 +103,26 @@ public interface ApiServer {
 
     @POST("rescue/deleteRescue")
     Call<ResponseBody> deleteRescue(@Query("rescueId") String rescueId);
+
+    @Multipart
+    @POST("sell/addSell")
+    Call<ResponseBody> addSell(@Part MultipartBody.Part img, @Query("stuNumber") String stuNumber,@Query("price") String price ,@Query("brand") String brand,@Query("model") String model,@Query("description") String description,@Query("type") String type);
+
+    @POST("sell/deleteSell")
+    Call<ResponseBody> deleteSell(@Query("sellId") String sellId);
+
+    @POST("sell/getSellList")
+    Call<ResponseBody> getSellList();
+
+    @POST("sell/likeSell")
+    Call<ResponseBody> likeSell(@Query("stuNumber") String stuNumber,@Query("sellId") String sellId);
+
+    @POST("sell/isLiked")
+    Call<ResponseBody> isLiked(@Query("stuNumber") String stuNumber,@Query("sellId") String sellId);
+
+    @POST("sell/getLikeList")
+    Call<ResponseBody> getLikeList(@Query("stuNumber") String stuNumber);
+
+    @POST("sell/deleteLike")
+    Call<ResponseBody> deleteLike(@Query("stuNumber") String stuNumber,@Query("sellId") String sellId);
 }

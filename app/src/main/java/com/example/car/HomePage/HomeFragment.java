@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -73,6 +74,8 @@ public class HomeFragment extends Fragment {
     CardView home_button_license_check;
     CardView home_button_study;
     RelativeLayout home_card_not_found;
+    LinearLayout home_manage_first;
+    TextView home_manage_text;
 
     CircleImageView home_icon;
 
@@ -190,6 +193,8 @@ public class HomeFragment extends Fragment {
         home_card_time = view.findViewById(R.id.home_card_time);
         home_emo = view.findViewById(R.id.home_emo);
         home_icon = view.findViewById(R.id.home_icon);
+        home_manage_first = view.findViewById(R.id.home_manage_first);
+        home_manage_text = view.findViewById(R.id.home_manage_text);
 
         // get haveCard
         if(haveCard){
@@ -332,7 +337,15 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        //早上好
+        // 管理员内容展示
+        if (UserInfo.Admin) {
+            home_manage_first.setVisibility(View.VISIBLE);
+            home_manage_text.setVisibility(View.VISIBLE);
+        } else {
+            home_manage_first.setVisibility(View.GONE);
+            home_manage_text.setVisibility(View.GONE);
+        }
+        // 早上好
         LocalTime currentTime = LocalTime.now();
         int hour = currentTime.getHour();
         if (hour >= 6 && hour < 12){
@@ -342,7 +355,7 @@ public class HomeFragment extends Fragment {
         } else {
             home_morning.setText("晚上好，"+ UserInfo.UserName);
         }
-        //加载头像
+        // 加载头像
         Glide.with(requireActivity())
                 .load("http://182.92.87.107:8080/CarServerFile/userIcon/"+UserInfo.UserStuNum)
                 .error(R.drawable.nwulogo)

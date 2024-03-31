@@ -15,6 +15,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.signature.ObjectKey;
+import com.example.car.Info.UserInfo;
 import com.example.car.R;
 
 import java.util.List;
@@ -51,10 +54,19 @@ public class SaleCardAdapter extends RecyclerView.Adapter<SaleCardAdapter.ViewHo
             public void onClick(View view) {
                 Intent intent = new Intent(context, SaleCarActivity.class);
                 ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context,holder.sale_card_picture,"sale_car_big_pic");
+                intent.putExtra("carName",lists.get(position).carName);
+                intent.putExtra("description",lists.get(position).description);
+                intent.putExtra("price",lists.get(position).price);
+                intent.putExtra("sellId",lists.get(position).sellId);
+                intent.putExtra("stuNumber",lists.get(position).stuNumber);
                 context.startActivity(intent,optionsCompat.toBundle());
             }
         });
-
+        Glide.with(context)
+                .load("http://182.92.87.107:8080/CarServerFile/sellCar/"+ lists.get(position).sellId)
+                .error(R.drawable.nwulogo)
+                .placeholder(R.drawable.nwulogo)
+                .into(holder.sale_card_picture);
     }
 
 

@@ -50,7 +50,6 @@ public class SaleSearchActivity extends AppCompatActivity {
 
         saleCard_rv = findViewById(R.id.sale_detail_rv);
         List<SaleCard> s = new ArrayList<>();
-        s.add(new SaleCard("奥迪A8","这是一辆好车，能跑很远","399999","24"));
         // 获取适配器实例
         SaleCardAdapter adapter = new SaleCardAdapter(s,this);
         //配置适配器
@@ -67,7 +66,6 @@ public class SaleSearchActivity extends AppCompatActivity {
 
                 smartRefreshLayout.finishRefresh(0);//传入false表示刷新失败
                 //添加一条新数据，再最开头的位置
-                s.add(0,new SaleCard("奥迪A8","这是一辆好车，能跑很远","399999","24"));
                 adapter.notifyDataSetChanged();
                 Toast.makeText(getApplicationContext(), "刷新成功", Toast.LENGTH_SHORT).show();
             }
@@ -78,7 +76,6 @@ public class SaleSearchActivity extends AppCompatActivity {
             public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
                 smartRefreshLayout.finishLoadMore(0);
                 //添加一条新数据，再最后的位置
-                s.add(new SaleCard("奥迪A8","这是一辆好车，能跑很远","399999","24"));
                 adapter.notifyDataSetChanged();
                 Toast.makeText(getApplicationContext(), "刷新成功", Toast.LENGTH_SHORT).show();
             }

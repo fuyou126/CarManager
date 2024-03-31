@@ -354,8 +354,11 @@ public class CarAddActivity extends AppCompatActivity {
             file.delete();
         }
         afterCrop = Uri.fromFile(file);
+        UCrop.Options options = new UCrop.Options();
+        options.setCompressionQuality(20);
         UCrop.of(uri, afterCrop)
                 .withAspectRatio(16, 9)
+                .withOptions(options)
                 .start(CarAddActivity.this,UCrop.REQUEST_CROP);
     }
 

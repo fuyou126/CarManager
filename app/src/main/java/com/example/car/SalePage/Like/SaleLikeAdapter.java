@@ -17,18 +17,38 @@ import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
+import com.bumptech.glide.Glide;
+import com.example.car.HTTPServer.ApiServer;
+import com.example.car.Info.UserInfo;
 import com.example.car.R;
 import com.example.car.SalePage.SaleCarActivity;
 import com.example.car.SalePage.SaleCard;
 import com.example.car.SalePage.SaleCardAdapter;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class SaleLikeAdapter extends RecyclerView.Adapter<SaleLikeAdapter.ViewHolder> {
     private List<SaleCard> lists;
     private Context context;
+
+    Retrofit retrofit = new Retrofit.Builder()
+            .baseUrl("http://182.92.87.107:8081/")
+            .build();
+    ApiServer apiService = retrofit.create(ApiServer.class);
 
     public SaleLikeAdapter(List<SaleCard> lists, Context context) {
         this.lists = lists;
@@ -50,6 +70,11 @@ public class SaleLikeAdapter extends RecyclerView.Adapter<SaleLikeAdapter.ViewHo
             public void onClick(View view) {
                 Intent intent = new Intent(context, SaleCarActivity.class);
                 ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context,holder.sale_like_card_picture,"sale_car_big_pic");
+                intent.putExtra("carName",lists.get(position).carName);
+                intent.putExtra("description",lists.get(position).description);
+                intent.putExtra("price",lists.get(position).price);
+                intent.putExtra("sellId",lists.get(position).sellId);
+                intent.putExtra("stuNumber",lists.get(position).stuNumber);
                 context.startActivity(intent,optionsCompat.toBundle());
             }
         });
@@ -57,6 +82,11 @@ public class SaleLikeAdapter extends RecyclerView.Adapter<SaleLikeAdapter.ViewHo
         holder.sale_like_card_name.setText(lists.get(position).getCarName_viewer());
         holder.sale_like_card_description.setText(lists.get(position).getCarDescription_viewer());
         holder.sale_like_card_price.setText("￥" + lists.get(position).price);
+        Glide.with(context)
+                .load("http://182.92.87.107:8080/CarServerFile/sellCar/"+ lists.get(position).sellId)
+                .error(R.drawable.nwulogo)
+                .placeholder(R.drawable.nwulogo)
+                .into(holder.sale_like_card_picture);
         holder.sale_like_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -83,10 +113,31 @@ public class SaleLikeAdapter extends RecyclerView.Adapter<SaleLikeAdapter.ViewHo
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
                                 sweetAlertDialog.dismissWithAnimation();
                                 // delete car
-                                lists.remove(position);
-                                notifyItemRemoved(position);
-                                notifyDataSetChanged();
-                                Toast.makeText(context,"车辆收藏已删除",Toast.LENGTH_LONG).show();
+                                Call<ResponseBody> call = apiService.deleteLike(UserInfo.UserStuNum,lists.get(position).sellId);
+                                call.enqueue(new Callback<ResponseBody>() {
+                                    @SuppressLint("NotifyDataSetChanged")
+                                    @Override
+                                    public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                                        if (response.isSuccessful()) {
+                                            try {
+                                                String responseString = response.body().string();
+                                                Map<String, String> jsonMap = JSON.parseObject(responseString, new TypeReference<HashMap<String, String>>() {});
+                                                if(jsonMap.get("code").equals("1")){
+                                                    lists.remove(position);
+                                                    notifyItemRemoved(position);
+                                                    notifyDataSetChanged();
+                                                    Toast.makeText(context,"车辆收藏已删除",Toast.LENGTH_LONG).show();
+                                                }
+                                            } catch (IOException e) {
+                                            }
+                                        }
+                                    }
+                                    @Override
+                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                        // 处理失败的情况
+                                        Toast.makeText(context,"网络错误",Toast.LENGTH_LONG).show();
+                                    }
+                                });
                             }
                         })
                         .show();

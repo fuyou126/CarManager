@@ -1,24 +1,25 @@
 package com.example.car.SalePage;
 
 public class SaleCard {
-//    Image
     public String carName;
-    public String carDescription;
+    public String description;
     public String price;
-    public String saleID;
+    public String sellId;
+    public String stuNumber;
 
 
-    public SaleCard(String carName, String carDescription, String price, String saleID) {
+    public SaleCard(String carName, String description, String price, String sellId,String stuNumber) {
         this.carName = carName;
-        this.carDescription = carDescription;
+        this.description = description;
         this.price = price;
-        this.saleID = saleID;
+        this.sellId = sellId;
+        this.stuNumber = stuNumber;
     }
 
     public String getCarName_viewer() {
         String carName_viewer;
         if(carName.length()>5){
-            carName_viewer = carName.substring(0,5) + "...";
+            carName_viewer = carName.substring(0,6) + "...";
         }else{
             carName_viewer = carName;
         }
@@ -27,10 +28,10 @@ public class SaleCard {
 
     public String getCarDescription_viewer() {
         String carDescription_viewer;
-        if(carDescription.length()>10){
-            carDescription_viewer = carDescription.substring(0,10) + "...";
+        if(description.length()>10){
+            carDescription_viewer = description.substring(0,10) + "...";
         }else{
-            carDescription_viewer = carDescription;
+            carDescription_viewer = description;
         }
         return carDescription_viewer;
     }
