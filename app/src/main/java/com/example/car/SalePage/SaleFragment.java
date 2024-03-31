@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -64,7 +65,8 @@ public class SaleFragment extends Fragment {
     CardView search_card;
     CardView sale_button_message;
     EditText sale_search_content;
-    ImageView sale_button_message_haveNews;
+    RelativeLayout sale_button_message_haveNews;
+    TextView sale_button_message_count;
 
     CardView sale_button_like;
     CardView sale_button_sell;
@@ -76,6 +78,9 @@ public class SaleFragment extends Fragment {
             .baseUrl("http://182.92.87.107:8081/")
             .build();
     ApiServer apiService = retrofit.create(ApiServer.class);
+
+    String newsTotal = "0";
+    String newsDetail = "";
 
     public SaleFragment() {
         // Required empty public constructor
@@ -97,9 +102,11 @@ public class SaleFragment extends Fragment {
 
         requireActivity().getWindow().setStatusBarColor(Color.rgb(76,57,204));
         InitView();
+        getSellList();
         return view;
     }
 
+    @SuppressLint("SetTextI18n")
     private void InitView(){
         search_card = view.findViewById(R.id.search_card);
 
@@ -114,12 +121,16 @@ public class SaleFragment extends Fragment {
 
         sale_button_message_haveNews = view.findViewById(R.id.sale_button_message_haveNews);
         sale_button_message_haveNews.setVisibility(View.INVISIBLE);
+        sale_button_message_count = view.findViewById(R.id.sale_button_message_count);
+        sale_button_message_count.setText("99+");
 
         sale_button_message = view.findViewById(R.id.sale_button_message);
         sale_button_message.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(requireActivity(), ChatListActivity.class);
+                intent.putExtra("newsTotal",newsTotal);
+                intent.putExtra("newsDetail",newsDetail);
                 startActivity(intent);
             }
         });
@@ -172,7 +183,7 @@ public class SaleFragment extends Fragment {
                 smartRefreshLayout.finishRefresh(1000/*,false*/);//传入false表示刷新失败
                 //添加一条新数据，再最开头的位置
                 getSellList();
-                sale_button_message_haveNews.setVisibility(View.VISIBLE);
+                getNews();
                 Toast.makeText(requireActivity(), "刷新成功", Toast.LENGTH_SHORT).show();
             }
         });
@@ -184,7 +195,7 @@ public class SaleFragment extends Fragment {
                 smartRefreshLayout.finishLoadMore(1000);
                 //添加一条新数据，再最后的位置
                 getSellList();
-                sale_button_message_haveNews.setVisibility(View.INVISIBLE);
+                getNews();
                 Toast.makeText(requireActivity(), "刷新成功", Toast.LENGTH_SHORT).show();
             }
         });
@@ -228,7 +239,7 @@ public class SaleFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        getSellList();
+        getNews();
     }
 
     private void getSellList(){
@@ -257,6 +268,51 @@ public class SaleFragment extends Fragment {
                                     list.add(new SaleCard(carName,description,price,sellId,stuNumber));
                                 }
                                 adapter.notifyDataSetChanged();
+                            }
+                        }
+                    } catch (IOException e) {
+                    }
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                // 处理失败的情况
+                Toast.makeText(requireActivity(),"网络错误",Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void getNews() {
+        Call<ResponseBody> call = apiService.getNews(UserInfo.UserStuNum);
+        call.enqueue(new Callback<ResponseBody>() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    try {
+                        String responseString = response.body().string();
+                        Map<String, String> jsonMap = JSON.parseObject(responseString, new TypeReference<HashMap<String, String>>() {});
+                        if(jsonMap.get("code").equals("1")){
+                            if (jsonMap.get("total").equals("0")) {
+                                newsTotal = "0";
+                                newsDetail = "";
+                                sale_button_message_haveNews.setVisibility(View.INVISIBLE);
+
+                                if (jsonMap.containsKey("news")) {
+                                    newsDetail = jsonMap.get("news");
+                                }
+                            } else {
+                                newsTotal = jsonMap.get("total");
+                                newsDetail = "";
+
+                                sale_button_message_haveNews.setVisibility(View.VISIBLE);
+                                int total_int = Integer.parseInt(newsTotal);
+                                if (total_int > 99) {
+                                    sale_button_message_count.setText("99+");
+                                } else {
+                                    sale_button_message_count.setText(newsTotal);
+                                }
+                                newsDetail = jsonMap.get("news");
                             }
                         }
                     } catch (IOException e) {

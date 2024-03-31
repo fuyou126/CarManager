@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,6 +15,8 @@ import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.signature.ObjectKey;
 import com.example.car.MainActivity;
 import com.example.car.R;
 import com.example.car.SalePage.SaleCard;
@@ -62,10 +65,22 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
                 // start chat
                 Intent intent = new Intent(context, ChatDetailActivity.class);
                 ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context,holder.sale_chat_list_icon,"sale_chat_detail_icon");
+                intent.putExtra("yourStuNumber",lists.get(position).stuNumber);
+                intent.putExtra("sellId",lists.get(position).sellId);
                 context.startActivity(intent,optionsCompat.toBundle());
             }
         });
-
+        Glide.with(context)
+                .load("http://182.92.87.107:8080/CarServerFile/userIcon/"+lists.get(position).stuNumber)
+                .error(R.drawable.nwulogo)
+                .placeholder(R.drawable.nwulogo)
+                .signature(new ObjectKey(System.currentTimeMillis()))
+                .into(holder.sale_chat_list_icon);
+        Glide.with(context)
+                .load("http://182.92.87.107:8080/CarServerFile/sellCar/"+lists.get(position).sellId)
+                .error(R.drawable.nwulogo)
+                .placeholder(R.drawable.nwulogo)
+                .into(holder.sale_chat_list_car_image);
     }
 
     @Override
@@ -80,6 +95,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
         public CardView sale_chat_list_card;
         public CircleImageView sale_chat_list_icon;
         // icon,image
+        public ImageView sale_chat_list_car_image;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -88,6 +104,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
             sale_chat_list_unseen_num = itemView.findViewById(R.id.sale_chat_list_unseen_num);
             sale_chat_list_card = itemView.findViewById(R.id.sale_chat_list_card);
             sale_chat_list_icon = itemView.findViewById(R.id.sale_chat_list_icon);
+            sale_chat_list_car_image = itemView.findViewById(R.id.sale_chat_list_car_image);
         }
     }
 

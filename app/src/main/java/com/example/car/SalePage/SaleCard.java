@@ -18,7 +18,7 @@ public class SaleCard {
 
     public String getCarName_viewer() {
         String carName_viewer;
-        if(carName.length()>5){
+        if(carName.length()>6){
             carName_viewer = carName.substring(0,6) + "...";
         }else{
             carName_viewer = carName;

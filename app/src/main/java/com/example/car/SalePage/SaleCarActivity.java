@@ -201,6 +201,8 @@ public class SaleCarActivity extends AppCompatActivity {
                 // start chat
                 Intent intent = new Intent(SaleCarActivity.this, ChatDetailActivity.class);
                 ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) SaleCarActivity.this,sale_car_big_pic,"sale_chat_detail_car_card");
+                intent.putExtra("yourStuNumber",stuNumber);
+                intent.putExtra("sellId",sellId);
                 startActivity(intent,optionsCompat.toBundle());
             }
         });
@@ -210,6 +212,8 @@ public class SaleCarActivity extends AppCompatActivity {
                 // start chat
                 Intent intent = new Intent(SaleCarActivity.this, ChatDetailActivity.class);
                 ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) SaleCarActivity.this,sale_car_big_pic,"sale_chat_detail_car_card");
+                intent.putExtra("yourStuNumber",stuNumber);
+                intent.putExtra("sellId",sellId);
                 startActivity(intent,optionsCompat.toBundle());
             }
         });

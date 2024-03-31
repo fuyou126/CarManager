@@ -86,6 +86,7 @@
                 app:cardCornerRadius="10dp">
 
                 <ImageView
+                    android:id="@+id/sale_chat_list_car_image"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="@drawable/test_sale_car_pic"

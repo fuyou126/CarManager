@@ -49,12 +49,12 @@ public class ChatDetailAdapter extends RecyclerView.Adapter<ChatDetailAdapter.Ch
         if(lists.get(position).isSend){
             holder.sale_chat_detail_my_msg.setVisibility(View.VISIBLE);
             holder.sale_chat_detail_my_content.setText(lists.get(position).content);
-            holder.sale_chat_detail_my_time.setText(lists.get(position).getTimeString());
+            holder.sale_chat_detail_my_time.setText(lists.get(position).time);
             holder.sale_chat_detail_your_msg.setVisibility(View.INVISIBLE);
         }else{
             holder.sale_chat_detail_your_msg.setVisibility(View.VISIBLE);
             holder.sale_chat_detail_your_content.setText(lists.get(position).content);
-            holder.sale_chat_detail_your_time.setText(lists.get(position).getTimeString());
+            holder.sale_chat_detail_your_time.setText(lists.get(position).time);
             holder.sale_chat_detail_my_msg.setVisibility(View.INVISIBLE);
         }
 

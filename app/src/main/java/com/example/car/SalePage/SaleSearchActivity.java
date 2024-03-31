@@ -7,11 +7,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
+import com.example.car.HTTPServer.ApiServer;
 import com.example.car.R;
 import com.scwang.smart.refresh.footer.ClassicsFooter;
 import com.scwang.smart.refresh.header.ClassicsHeader;
@@ -20,8 +26,17 @@ import com.scwang.smart.refresh.layout.api.RefreshLayout;
 import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class SaleSearchActivity extends AppCompatActivity {
 
@@ -30,6 +45,14 @@ public class SaleSearchActivity extends AppCompatActivity {
     String searchFor;
     CardView sale_detail_back;
 
+    List<SaleCard> list = new ArrayList<>();
+    SaleCardAdapter adapter;
+
+    Retrofit retrofit = new Retrofit.Builder()
+            .baseUrl("http://182.92.87.107:8081/")
+            .build();
+    ApiServer apiService = retrofit.create(ApiServer.class);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,9 +60,13 @@ public class SaleSearchActivity extends AppCompatActivity {
 
         getWindow().setStatusBarColor(Color.rgb(76,57,204));
         InitView();
+        searchFor();
     }
 
     private void InitView(){
+        Intent intent = getIntent();
+        searchFor = intent.getStringExtra("searchFor");
+
         sale_detail_back = findViewById(R.id.sale_detail_back);
         sale_detail_back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,9 +76,8 @@ public class SaleSearchActivity extends AppCompatActivity {
         });
 
         saleCard_rv = findViewById(R.id.sale_detail_rv);
-        List<SaleCard> s = new ArrayList<>();
         // 获取适配器实例
-        SaleCardAdapter adapter = new SaleCardAdapter(s,this);
+        adapter = new SaleCardAdapter(list,this);
         //配置适配器
         saleCard_rv.setAdapter(adapter);
         //配置布局管理器
@@ -66,7 +92,7 @@ public class SaleSearchActivity extends AppCompatActivity {
 
                 smartRefreshLayout.finishRefresh(0);//传入false表示刷新失败
                 //添加一条新数据，再最开头的位置
-                adapter.notifyDataSetChanged();
+                searchFor();
                 Toast.makeText(getApplicationContext(), "刷新成功", Toast.LENGTH_SHORT).show();
             }
         });
@@ -76,8 +102,48 @@ public class SaleSearchActivity extends AppCompatActivity {
             public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
                 smartRefreshLayout.finishLoadMore(0);
                 //添加一条新数据，再最后的位置
-                adapter.notifyDataSetChanged();
+                searchFor();
                 Toast.makeText(getApplicationContext(), "刷新成功", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void searchFor() {
+        Call<ResponseBody> call = apiService.searchFor(searchFor);
+        call.enqueue(new Callback<ResponseBody>() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    try {
+                        String responseString = response.body().string();
+                        Map<String, String> jsonMap = JSON.parseObject(responseString, new TypeReference<HashMap<String, String>>() {});
+                        if(jsonMap.get("code").equals("1")){
+                            list.clear();
+                            JSONArray jsonArray = JSONArray.parseArray(jsonMap.get("cars"));
+                            if (jsonArray != null) {
+                                for (Object obj : jsonArray) {
+                                    JSONObject jsonObj = (JSONObject) obj;
+                                    String sellId = jsonObj.getString("sellId");
+                                    String price = jsonObj.getString("price");
+                                    String brand = jsonObj.getString("brand");
+                                    String model = jsonObj.getString("model");
+                                    String carName = brand + " " +model;
+                                    String description = jsonObj.getString("description");
+                                    String stuNumber = jsonObj.getString("stuNumber");
+                                    list.add(new SaleCard(carName,description,price,sellId,stuNumber));
+                                }
+                                adapter.notifyDataSetChanged();
+                            }
+                        }
+                    } catch (IOException e) {
+                    }
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                // 处理失败的情况
+                Toast.makeText(SaleSearchActivity.this,"网络错误",Toast.LENGTH_LONG).show();
             }
         });
     }

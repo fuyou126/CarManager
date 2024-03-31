@@ -125,4 +125,17 @@ public interface ApiServer {
 
     @POST("sell/deleteLike")
     Call<ResponseBody> deleteLike(@Query("stuNumber") String stuNumber,@Query("sellId") String sellId);
+
+    @POST("sell/sendMessage")
+    Call<ResponseBody> sendMessage(@Query("myStuNumber") String myStuNumber, @Query("yourStuNumber") String yourStuNumber, @Query("sellId") String sellId, @Query("message") String message);
+
+    @POST("sell/getChatting")
+    Call<ResponseBody> getChatting(@Query("myStuNumber") String myStuNumber, @Query("yourStuNumber") String yourStuNumber, @Query("sellId") String sellId);
+
+    @POST("sell/getNews")
+    Call<ResponseBody> getNews(@Query("stuNumber") String stuNumber);
+
+    @POST("sell/searchFor")
+    Call<ResponseBody> searchFor(@Query("content") String content);
+
 }

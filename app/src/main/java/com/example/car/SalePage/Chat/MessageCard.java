@@ -3,16 +3,16 @@ package com.example.car.SalePage.Chat;
 public class MessageCard {
     String name,lastMessage;
     // icon
-    String icon;
+    String stuNumber;
     // carimage
-    String carImage;
+    String sellId;
     int unseenMessages;
 
-    public MessageCard(String name, String lastMessage, String icon, String carImage, int unseenMessages) {
+    public MessageCard(String name, String lastMessage, String stuNumber, String sellId, int unseenMessages) {
         this.name = name;
         this.lastMessage = lastMessage;
-        this.icon = icon;
-        this.carImage = carImage;
+        this.stuNumber = stuNumber;
+        this.sellId = sellId;
         this.unseenMessages = unseenMessages;
     }
 
